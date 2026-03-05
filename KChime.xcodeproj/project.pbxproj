@@ -14,35 +14,67 @@
 		1F525D234E4C86CD2DB3DE85 /* PrivacyDisclosureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C9D9BF35C17B4E2F05FCC9 /* PrivacyDisclosureView.swift */; };
 		2AD868F59BFA49718F08C840 /* ToneProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D00DE956C415AF92E4AFE8 /* ToneProfile.swift */; };
 		2D9FF177CB67D0F69B5C3410 /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A21DB8806550EAE23595007C /* EncryptionService.swift */; };
+		30A9A4E3C26015AC16848CFD /* SignInWithAppleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEA0D15F285C081E3C67838 /* SignInWithAppleService.swift */; };
 		30AF17FEE45CDEBE1F105C09 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0AC155FA11E44697529DD /* KeyboardViewController.swift */; };
+		31A35102ABB405BE0CDF1E81 /* PromiseNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E0666AFE5DF26687A47CC9 /* PromiseNotificationScheduler.swift */; };
 		383AEBDF2382ED242069A60E /* ContactEntity+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487FCE7E1E2FFCE2AB8B846E /* ContactEntity+Extensions.swift */; };
 		3871D60AB70A0C470811ABA4 /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF63B1DC01C7C53AAC684E9 /* UsageCache.swift */; };
+		38E3EB62C2B5BBB1E90DC3CD /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCBCC9E1539E52F044F8643 /* RevenueCatService.swift */; };
+		3AB7BEFCDA7508DD7CD75C5A /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2087D674791C7DB1AA2A7273 /* AnalyticsEvent.swift */; };
+		3BCC0594FF7CF5F61A10CE0C /* SignInWithAppleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC27539FB5B669F350A6EE0 /* SignInWithAppleButton.swift */; };
+		3DF170FCCDB307FA6F633329 /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCBCC9E1539E52F044F8643 /* RevenueCatService.swift */; };
+		407F9884882E080989CFEE86 /* PostHogAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923501E9A09E52AEDABCC4E6 /* PostHogAdapter.swift */; };
+		415C0AA403AFB435B27FE3FF /* KChimePromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37138BE5B458B4CD3F3A1501 /* KChimePromise.swift */; };
+		44C2404CCCCDC30D48188C2C /* ToneSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A780C0D3689350F8D819DEA5 /* ToneSettingsView.swift */; };
 		45906E34D3541FDD74611877 /* KChimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3518032D270D6E84E77E77 /* KChimeTests.swift */; };
+		46A6E0E0E45AEAADBA44DA67 /* OnboardingAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AC727DE44F9ED95F48B813 /* OnboardingAnalytics.swift */; };
 		4AA5F0924BA8718F955EFAF4 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A38139BDD919EE575C48EAC0 /* KeychainSwift */; };
+		516CB4517CDA6E38BE610A10 /* EntitlementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F14891A97C88446831EA4B /* EntitlementStore.swift */; };
 		53E71B1324DFA33740A39867 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121F03FCB1BF2E9412214DE9 /* KeyboardView.swift */; };
 		58A6A57B32B37D4263422715 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F60DF3BC2E8EEF919AAE95 /* ShareViewController.swift */; };
+		58C869879CFA121FB60DAA2B /* MemoryOptInBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BF18830473511E37E7B0E5 /* MemoryOptInBanner.swift */; };
+		5954BFE218ABED9CFA909C88 /* EntitlementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F14891A97C88446831EA4B /* EntitlementStore.swift */; };
 		5B3D2E6033792494C7FBA90F /* KChimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1205CCD6A2CE1CA5B36DD9D /* KChimeApp.swift */; };
+		5CD78066B92E4D5C8281B351 /* PromiseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED54BAE19E6257892F6351F /* PromiseDetector.swift */; };
+		6030266E1EBE712D181830D6 /* PromiseNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E0666AFE5DF26687A47CC9 /* PromiseNotificationScheduler.swift */; };
+		60AA80D690DD9897AEE2A616 /* PromiseBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18283E44C8E86835B785428 /* PromiseBannerView.swift */; };
 		617C306FB3DF7093E985FCF2 /* KChimeAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78AA655CC82E9A626962A54 /* KChimeAPIClient.swift */; };
+		6DC1018D39734A912ADDF85F /* KChimePromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37138BE5B458B4CD3F3A1501 /* KChimePromise.swift */; };
 		6E1FE3584480111BCBE7203D /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A21DB8806550EAE23595007C /* EncryptionService.swift */; };
 		72BA1B12AC6E5CF4FF7EEE6F /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C75DB851CF6C12C90BC9F /* PaywallView.swift */; };
+		7B9402B23990E09B71A76768 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70825EFD135E153E805837D5 /* AnalyticsService.swift */; };
 		7E4BD64DB5115296D3E0A9B7 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283C822D4E5EC2B5105DCF19 /* AppConstants.swift */; };
 		89C40DD5C68AF82DB7DF5E92 /* SavedRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153F0E6997F27338C8F62ED0 /* SavedRepliesView.swift */; };
 		8D725DCB96CFCD6946986626 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6662D0FC9E2C1521F585FBD8 /* PersistenceController.swift */; };
 		927F043645B0697030252BD6 /* KeyboardSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D46329770906E8A7355F1A7 /* KeyboardSetupView.swift */; };
 		983996B368E0C3A13698ED70 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26BFCA9348907C4A151322D /* SettingsView.swift */; };
+		9B8FE0323AB64C02B3AF63CA /* RelationshipProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96D5EF344CA565660D175BB /* RelationshipProfile.swift */; };
+		9F08FD2483AA86209388DA4D /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70825EFD135E153E805837D5 /* AnalyticsService.swift */; };
 		A10EC70D4941C5DA9323F1AF /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283C822D4E5EC2B5105DCF19 /* AppConstants.swift */; };
+		A19733ED17808A704DA202FC /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2087D674791C7DB1AA2A7273 /* AnalyticsEvent.swift */; };
+		A4E282548B0F3F9D2C121F62 /* PromiseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED54BAE19E6257892F6351F /* PromiseDetector.swift */; };
 		AA859AAA9A2AA30B50605313 /* KChimeAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78AA655CC82E9A626962A54 /* KChimeAPIClient.swift */; };
 		ABFFE29E205F0A090CC79DB3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3677196166D87F2EA02488 /* AppState.swift */; };
+		AC52BCD6ED70695550F96A83 /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCBCC9E1539E52F044F8643 /* RevenueCatService.swift */; };
 		AD9005692E1E31A4A7F92AA9 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A8646CB53B7A2E686A313 /* ContactsView.swift */; };
+		AE3FC7E23CC4DDB947051BE6 /* PromiseNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E0666AFE5DF26687A47CC9 /* PromiseNotificationScheduler.swift */; };
+		B2C3AEB3C163C37DB44D2E53 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2087D674791C7DB1AA2A7273 /* AnalyticsEvent.swift */; };
+		B5630DB92768FC5CB528F8E2 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = B214EF9969A7E0D573537CBA /* RevenueCat */; };
 		B7B11797DEF6766B6425FCDF /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283C822D4E5EC2B5105DCF19 /* AppConstants.swift */; };
 		B97391ED3AA8D8D1EB7396FA /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF5B1CC01DD4B92E4D2FDA1 /* OnboardingFlowView.swift */; };
 		BAE0BB5727EB4974D372FC6B /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF63B1DC01C7C53AAC684E9 /* UsageCache.swift */; };
 		C2ADE51845DDE3343068291E /* KChimeAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78AA655CC82E9A626962A54 /* KChimeAPIClient.swift */; };
+		C3D33D6C91622CB438C40C30 /* PromiseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED54BAE19E6257892F6351F /* PromiseDetector.swift */; };
 		CC2B7A0D722E98AAE96FC65F /* ToneProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6EE1A9C02D43D75D2929F /* ToneProfileSetupView.swift */; };
+		D1674F548999AAD8E1F0DFE1 /* PromisesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09148C49FB48B443863CA553 /* PromisesListView.swift */; };
+		D44642BA1F12836105D6DF01 /* SegmentAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED054805BB00AE0C4E00A9B5 /* SegmentAdapter.swift */; };
 		D59CB138FE6BC95B3DB6B0F1 /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF63B1DC01C7C53AAC684E9 /* UsageCache.swift */; };
 		D6CD620CA391E41F443953A8 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 05CF86FFC57473DE4B567E14 /* KeychainSwift */; };
+		DE5C97215009E86B2EAF61D9 /* KChimePromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37138BE5B458B4CD3F3A1501 /* KChimePromise.swift */; };
+		E371A39600C1063D4767C58B /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70825EFD135E153E805837D5 /* AnalyticsService.swift */; };
 		E47307CC295FF7C88408C4F9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6339028A32D986F3F32DF285 /* MainTabView.swift */; };
 		ED8077D44410E45317BA0ADC /* KChime.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F9CEF8CD8AE9BEB8DBA95BEE /* KChime.xcdatamodeld */; };
+		F8E6DB1662172A4C386EC8B0 /* EntitlementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F14891A97C88446831EA4B /* EntitlementStore.swift */; };
 		FA7C8F85A65E43F5961362F4 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571A1124C7BF57995C99E06 /* HomeView.swift */; };
 		FEDE56FAA12AE6C1B52C57ED /* ShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C61301E5C8A5E515CB9D3 /* ShareViewModel.swift */; };
 /* End PBXBuildFile section */
@@ -73,41 +105,58 @@
 
 /* Begin PBXFileReference section */
 		0571A1124C7BF57995C99E06 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		09148C49FB48B443863CA553 /* PromisesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesListView.swift; sourceTree = "<group>"; };
 		121F03FCB1BF2E9412214DE9 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		153F0E6997F27338C8F62ED0 /* SavedRepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRepliesView.swift; sourceTree = "<group>"; };
 		170992FDE4A49B535245A448 /* KChimeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KChimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		18E0666AFE5DF26687A47CC9 /* PromiseNotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseNotificationScheduler.swift; sourceTree = "<group>"; };
+		2087D674791C7DB1AA2A7273 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
 		21D00DE956C415AF92E4AFE8 /* ToneProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToneProfile.swift; sourceTree = "<group>"; };
 		27D86D7FA15DAB43410BBBA3 /* KChimeKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KChimeKeyboard.entitlements; sourceTree = "<group>"; };
 		283C822D4E5EC2B5105DCF19 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		2857F089750FB923EBB4695A /* KChime.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KChime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D46329770906E8A7355F1A7 /* KeyboardSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardSetupView.swift; sourceTree = "<group>"; };
 		2DA6EE1A9C02D43D75D2929F /* ToneProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToneProfileSetupView.swift; sourceTree = "<group>"; };
+		37138BE5B458B4CD3F3A1501 /* KChimePromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KChimePromise.swift; sourceTree = "<group>"; };
+		45AC727DE44F9ED95F48B813 /* OnboardingAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAnalytics.swift; sourceTree = "<group>"; };
 		487FCE7E1E2FFCE2AB8B846E /* ContactEntity+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactEntity+Extensions.swift"; sourceTree = "<group>"; };
 		4BCB2A90BD3141CABB1D3434 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		56C9D9BF35C17B4E2F05FCC9 /* PrivacyDisclosureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyDisclosureView.swift; sourceTree = "<group>"; };
 		58BBABB19F7C55F19F585521 /* KChime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KChime.entitlements; sourceTree = "<group>"; };
 		5C7C61301E5C8A5E515CB9D3 /* ShareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewModel.swift; sourceTree = "<group>"; };
 		5D3A9547486E736F0E9074F6 /* KChimeShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KChimeShare.entitlements; sourceTree = "<group>"; };
+		5DEA0D15F285C081E3C67838 /* SignInWithAppleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleService.swift; sourceTree = "<group>"; };
 		5E3677196166D87F2EA02488 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		6339028A32D986F3F32DF285 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		6662D0FC9E2C1521F585FBD8 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		6A7A8646CB53B7A2E686A313 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
+		70825EFD135E153E805837D5 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		748608667D66AD3CBED85C74 /* KeyboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewModel.swift; sourceTree = "<group>"; };
 		785F8F4C302C4E40E0A583E6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
+		7CC27539FB5B669F350A6EE0 /* SignInWithAppleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButton.swift; sourceTree = "<group>"; };
 		83498FACFF7C931FE8C60269 /* KChime.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = KChime.xcdatamodel; sourceTree = "<group>"; };
 		8AF63B1DC01C7C53AAC684E9 /* UsageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageCache.swift; sourceTree = "<group>"; };
+		91F14891A97C88446831EA4B /* EntitlementStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementStore.swift; sourceTree = "<group>"; };
+		923501E9A09E52AEDABCC4E6 /* PostHogAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHogAdapter.swift; sourceTree = "<group>"; };
 		9B4E021147AE299359420A94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A17DE01A4A4AB571821DC6B5 /* KChimeShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KChimeShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A21DB8806550EAE23595007C /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
+		A780C0D3689350F8D819DEA5 /* ToneSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToneSettingsView.swift; sourceTree = "<group>"; };
 		B1205CCD6A2CE1CA5B36DD9D /* KChimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KChimeApp.swift; sourceTree = "<group>"; };
 		B26BFCA9348907C4A151322D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BDCBCC9E1539E52F044F8643 /* RevenueCatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatService.swift; sourceTree = "<group>"; };
 		BFF0AC155FA11E44697529DD /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		C78AA655CC82E9A626962A54 /* KChimeAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KChimeAPIClient.swift; sourceTree = "<group>"; };
+		C96D5EF344CA565660D175BB /* RelationshipProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipProfile.swift; sourceTree = "<group>"; };
 		D70CF9AC3D7A977DD76452B0 /* KChimeKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KChimeKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E18283E44C8E86835B785428 /* PromiseBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseBannerView.swift; sourceTree = "<group>"; };
+		E3BF18830473511E37E7B0E5 /* MemoryOptInBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryOptInBanner.swift; sourceTree = "<group>"; };
+		ED054805BB00AE0C4E00A9B5 /* SegmentAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentAdapter.swift; sourceTree = "<group>"; };
 		F30301DA5D7FF4CA6A78915F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F7F60DF3BC2E8EEF919AAE95 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		FA5C75DB851CF6C12C90BC9F /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		FE3518032D270D6E84E77E77 /* KChimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KChimeTests.swift; sourceTree = "<group>"; };
+		FED54BAE19E6257892F6351F /* PromiseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseDetector.swift; sourceTree = "<group>"; };
 		FFF5B1CC01DD4B92E4D2FDA1 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AA5F0924BA8718F955EFAF4 /* KeychainSwift in Frameworks */,
+				B5630DB92768FC5CB528F8E2 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +189,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0CA738628587A43914886F42 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A780C0D3689350F8D819DEA5 /* ToneSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		0CC155720B5FA38314D28C5F = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				2D46329770906E8A7355F1A7 /* KeyboardSetupView.swift */,
+				45AC727DE44F9ED95F48B813 /* OnboardingAnalytics.swift */,
 				FFF5B1CC01DD4B92E4D2FDA1 /* OnboardingFlowView.swift */,
 				56C9D9BF35C17B4E2F05FCC9 /* PrivacyDisclosureView.swift */,
 				2DA6EE1A9C02D43D75D2929F /* ToneProfileSetupView.swift */,
@@ -209,6 +268,16 @@
 			path = KChimeTests;
 			sourceTree = "<group>";
 		};
+		62A5DE34B161579B1B914F8D /* Promises */ = {
+			isa = PBXGroup;
+			children = (
+				37138BE5B458B4CD3F3A1501 /* KChimePromise.swift */,
+				FED54BAE19E6257892F6351F /* PromiseDetector.swift */,
+				18E0666AFE5DF26687A47CC9 /* PromiseNotificationScheduler.swift */,
+			);
+			path = Promises;
+			sourceTree = "<group>";
+		};
 		6D9BC0498F1967DAD0822D0E /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -227,6 +296,15 @@
 			path = Persistence;
 			sourceTree = "<group>";
 		};
+		74C024C01E8EC64F4D2B5034 /* Payments */ = {
+			isa = PBXGroup;
+			children = (
+				91F14891A97C88446831EA4B /* EntitlementStore.swift */,
+				BDCBCC9E1539E52F044F8643 /* RevenueCatService.swift */,
+			);
+			path = Payments;
+			sourceTree = "<group>";
+		};
 		8FBB0C4B502F2704DCAB3121 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -234,6 +312,15 @@
 				B1205CCD6A2CE1CA5B36DD9D /* KChimeApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		971A638BD844389721348049 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				7CC27539FB5B669F350A6EE0 /* SignInWithAppleButton.swift */,
+				5DEA0D15F285C081E3C67838 /* SignInWithAppleService.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		9ACFB4A3ED94F47A10CCEF81 /* Paywall */ = {
@@ -247,9 +334,12 @@
 		A845A05C58E1E2D03430F84C /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CB91E65A282D2AE4D2A60A3D /* Analytics */,
 				38286BB5E489E4CE94CBCB13 /* Constants */,
 				B2E12FA3E498415C308E3381 /* Crypto */,
 				6D9BC0498F1967DAD0822D0E /* Networking */,
+				74C024C01E8EC64F4D2B5034 /* Payments */,
+				62A5DE34B161579B1B914F8D /* Promises */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -266,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				487FCE7E1E2FFCE2AB8B846E /* ContactEntity+Extensions.swift */,
+				C96D5EF344CA565660D175BB /* RelationshipProfile.swift */,
 				21D00DE956C415AF92E4AFE8 /* ToneProfile.swift */,
 			);
 			path = Models;
@@ -280,6 +371,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		C2F6655BED670542A8F0737B /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				923501E9A09E52AEDABCC4E6 /* PostHogAdapter.swift */,
+				ED054805BB00AE0C4E00A9B5 /* SegmentAdapter.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		C46CDB0A8A4FA83601CF28E1 /* KChimeKeyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -288,8 +388,27 @@
 				121F03FCB1BF2E9412214DE9 /* KeyboardView.swift */,
 				BFF0AC155FA11E44697529DD /* KeyboardViewController.swift */,
 				748608667D66AD3CBED85C74 /* KeyboardViewModel.swift */,
+				E3BF18830473511E37E7B0E5 /* MemoryOptInBanner.swift */,
+				E18283E44C8E86835B785428 /* PromiseBannerView.swift */,
 			);
 			path = KChimeKeyboard;
+			sourceTree = "<group>";
+		};
+		CB91E65A282D2AE4D2A60A3D /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				2087D674791C7DB1AA2A7273 /* AnalyticsEvent.swift */,
+				70825EFD135E153E805837D5 /* AnalyticsService.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		CF9B242433757F23146165D4 /* Promises */ = {
+			isa = PBXGroup;
+			children = (
+				09148C49FB48B443863CA553 /* PromisesListView.swift */,
+			);
+			path = Promises;
 			sourceTree = "<group>";
 		};
 		EE7BC4DF7A204C2D65240F93 /* Products */ = {
@@ -306,13 +425,17 @@
 		F97AAF781525C7EED0FB5128 /* KChime */ = {
 			isa = PBXGroup;
 			children = (
+				C2F6655BED670542A8F0737B /* Analytics */,
 				8FBB0C4B502F2704DCAB3121 /* App */,
+				971A638BD844389721348049 /* Auth */,
 				BA476AA2BE4B9BB6DC9A65DF /* Models */,
 				0EF770B8AF51AD89ACFBF37C /* Onboarding */,
 				9ACFB4A3ED94F47A10CCEF81 /* Paywall */,
 				720F5947FEB8F6C05DCB2B78 /* Persistence */,
+				CF9B242433757F23146165D4 /* Promises */,
 				BF1D724D39EA863F04CF8068 /* Resources */,
 				1373284150DE6B9ECE67B09A /* Services */,
+				0CA738628587A43914886F42 /* Settings */,
 				22B4AC8030CB0C034903D0B0 /* Tabs */,
 			);
 			path = KChime;
@@ -335,6 +458,7 @@
 			name = KChime;
 			packageProductDependencies = (
 				A38139BDD919EE575C48EAC0 /* KeychainSwift */,
+				B214EF9969A7E0D573537CBA /* RevenueCat */,
 			);
 			productName = KChime;
 			productReference = 2857F089750FB923EBB4695A /* KChime.app */;
@@ -437,6 +561,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F8E834F9F410324922228F78 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				B8015FABBE959FCFFCDD236E /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -455,12 +580,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2C3AEB3C163C37DB44D2E53 /* AnalyticsEvent.swift in Sources */,
+				7B9402B23990E09B71A76768 /* AnalyticsService.swift in Sources */,
 				B7B11797DEF6766B6425FCDF /* AppConstants.swift in Sources */,
 				06872959D208BBC9359BCF33 /* EncryptionService.swift in Sources */,
+				516CB4517CDA6E38BE610A10 /* EntitlementStore.swift in Sources */,
 				AA859AAA9A2AA30B50605313 /* KChimeAPIClient.swift in Sources */,
+				6DC1018D39734A912ADDF85F /* KChimePromise.swift in Sources */,
 				53E71B1324DFA33740A39867 /* KeyboardView.swift in Sources */,
 				30AF17FEE45CDEBE1F105C09 /* KeyboardViewController.swift in Sources */,
 				1CAB9C427AFC98B116E092D1 /* KeyboardViewModel.swift in Sources */,
+				58C869879CFA121FB60DAA2B /* MemoryOptInBanner.swift in Sources */,
+				60AA80D690DD9897AEE2A616 /* PromiseBannerView.swift in Sources */,
+				C3D33D6C91622CB438C40C30 /* PromiseDetector.swift in Sources */,
+				AE3FC7E23CC4DDB947051BE6 /* PromiseNotificationScheduler.swift in Sources */,
+				38E3EB62C2B5BBB1E90DC3CD /* RevenueCatService.swift in Sources */,
 				D59CB138FE6BC95B3DB6B0F1 /* UsageCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,9 +603,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AB7BEFCDA7508DD7CD75C5A /* AnalyticsEvent.swift in Sources */,
+				E371A39600C1063D4767C58B /* AnalyticsService.swift in Sources */,
 				A10EC70D4941C5DA9323F1AF /* AppConstants.swift in Sources */,
 				6E1FE3584480111BCBE7203D /* EncryptionService.swift in Sources */,
+				F8E6DB1662172A4C386EC8B0 /* EntitlementStore.swift in Sources */,
 				617C306FB3DF7093E985FCF2 /* KChimeAPIClient.swift in Sources */,
+				415C0AA403AFB435B27FE3FF /* KChimePromise.swift in Sources */,
+				5CD78066B92E4D5C8281B351 /* PromiseDetector.swift in Sources */,
+				6030266E1EBE712D181830D6 /* PromiseNotificationScheduler.swift in Sources */,
+				3DF170FCCDB307FA6F633329 /* RevenueCatService.swift in Sources */,
 				1E93A5D42876813EEFB69EC0 /* ShareView.swift in Sources */,
 				58A6A57B32B37D4263422715 /* ShareViewController.swift in Sources */,
 				FEDE56FAA12AE6C1B52C57ED /* ShareViewModel.swift in Sources */,
@@ -491,25 +632,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A19733ED17808A704DA202FC /* AnalyticsEvent.swift in Sources */,
+				9F08FD2483AA86209388DA4D /* AnalyticsService.swift in Sources */,
 				7E4BD64DB5115296D3E0A9B7 /* AppConstants.swift in Sources */,
 				ABFFE29E205F0A090CC79DB3 /* AppState.swift in Sources */,
 				383AEBDF2382ED242069A60E /* ContactEntity+Extensions.swift in Sources */,
 				AD9005692E1E31A4A7F92AA9 /* ContactsView.swift in Sources */,
 				2D9FF177CB67D0F69B5C3410 /* EncryptionService.swift in Sources */,
+				5954BFE218ABED9CFA909C88 /* EntitlementStore.swift in Sources */,
 				FA7C8F85A65E43F5961362F4 /* HomeView.swift in Sources */,
 				ED8077D44410E45317BA0ADC /* KChime.xcdatamodeld in Sources */,
 				C2ADE51845DDE3343068291E /* KChimeAPIClient.swift in Sources */,
 				5B3D2E6033792494C7FBA90F /* KChimeApp.swift in Sources */,
+				DE5C97215009E86B2EAF61D9 /* KChimePromise.swift in Sources */,
 				927F043645B0697030252BD6 /* KeyboardSetupView.swift in Sources */,
 				E47307CC295FF7C88408C4F9 /* MainTabView.swift in Sources */,
+				46A6E0E0E45AEAADBA44DA67 /* OnboardingAnalytics.swift in Sources */,
 				B97391ED3AA8D8D1EB7396FA /* OnboardingFlowView.swift in Sources */,
 				72BA1B12AC6E5CF4FF7EEE6F /* PaywallView.swift in Sources */,
 				8D725DCB96CFCD6946986626 /* PersistenceController.swift in Sources */,
+				407F9884882E080989CFEE86 /* PostHogAdapter.swift in Sources */,
 				1F525D234E4C86CD2DB3DE85 /* PrivacyDisclosureView.swift in Sources */,
+				A4E282548B0F3F9D2C121F62 /* PromiseDetector.swift in Sources */,
+				31A35102ABB405BE0CDF1E81 /* PromiseNotificationScheduler.swift in Sources */,
+				D1674F548999AAD8E1F0DFE1 /* PromisesListView.swift in Sources */,
+				9B8FE0323AB64C02B3AF63CA /* RelationshipProfile.swift in Sources */,
+				AC52BCD6ED70695550F96A83 /* RevenueCatService.swift in Sources */,
 				89C40DD5C68AF82DB7DF5E92 /* SavedRepliesView.swift in Sources */,
+				D44642BA1F12836105D6DF01 /* SegmentAdapter.swift in Sources */,
 				983996B368E0C3A13698ED70 /* SettingsView.swift in Sources */,
+				3BCC0594FF7CF5F61A10CE0C /* SignInWithAppleButton.swift in Sources */,
+				30A9A4E3C26015AC16848CFD /* SignInWithAppleService.swift in Sources */,
 				2AD868F59BFA49718F08C840 /* ToneProfile.swift in Sources */,
 				CC2B7A0D722E98AAE96FC65F /* ToneProfileSetupView.swift in Sources */,
+				44C2404CCCCDC30D48188C2C /* ToneSettingsView.swift in Sources */,
 				3871D60AB70A0C470811ABA4 /* UsageCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -849,6 +1005,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B8015FABBE959FCFFCDD236E /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		F8E834F9F410324922228F78 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
@@ -874,6 +1038,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F8E834F9F410324922228F78 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
+		};
+		B214EF9969A7E0D573537CBA /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8015FABBE959FCFFCDD236E /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
 		};
 /* End XCSwiftPackageProductDependency section */
 
