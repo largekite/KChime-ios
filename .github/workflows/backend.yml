@@ -53,6 +53,7 @@ jobs:
           JWT_SECRET: test-secret-at-least-32-characters-long
           APPLE_CLIENT_ID: com.kchime.app
           APPLE_TEAM_ID: TESTTEAMID
+          REVENUECAT_WEBHOOK_SECRET: test-revenuecat-webhook-secret-32chars
 
   deploy-preview:
     name: Deploy Preview (Vercel)
