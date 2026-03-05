@@ -1,0 +1,33 @@
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/
+xcuserstate
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# CocoaPods (not used, but just in case)
+Pods/
+*.xcworkspace
+!*.xcodeproj/*.xcworkspace
+
+# Secrets
+*.env
+.env.local
+Secrets.swift
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Build artifacts
+build/
