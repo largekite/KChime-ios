@@ -20,6 +20,11 @@ struct MainTabView: View {
                     Label("Contacts", systemImage: "person.2.fill")
                 }
 
+            PromisesListView()
+                .tabItem {
+                    Label("Promises", systemImage: "bell.badge.fill")
+                }
+
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")

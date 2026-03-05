@@ -1,26 +1,29 @@
 import SwiftUI
-import StoreKit
+import RevenueCat
 
 struct PaywallView: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var rcService: RevenueCatService
     @Environment(\.dismiss) private var dismiss
 
-    @State private var product: Product?
-    @State private var isLoading = false
+    @State private var selectedPackageIndex: Int = 0
     @State private var errorMessage: String?
+
+    private var packages: [Package] { rcService.currentOffering?.availablePackages ?? [] }
+    private var selectedPackage: Package? { packages.indices.contains(selectedPackageIndex) ? packages[selectedPackageIndex] : nil }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 32) {
+                VStack(spacing: 28) {
                     heroSection
-                    featuresSection
-                    pricingSection
+                    comparisonTable
+                    if !packages.isEmpty { packagePicker }
+                    ctaSection
                     legalFooter
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 40)
+                .padding(.top, 20)
+                .padding(.bottom, 48)
             }
             .navigationTitle("KChime Pro")
             .navigationBarTitleDisplayMode(.inline)
@@ -28,9 +31,18 @@ struct PaywallView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Restore") {
+                        Task {
+                            try? await rcService.restorePurchases()
+                            if rcService.isPro { dismiss() }
+                        }
+                    }
+                    .font(.subheadline)
+                }
             }
-            .task { await loadProduct() }
-            .alert("Error", isPresented: Binding(
+            .task { await rcService.fetchOfferings() }
+            .alert("Purchase Error", isPresented: Binding(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
             )) {
@@ -41,73 +53,121 @@ struct PaywallView: View {
         }
     }
 
-    // MARK: - Sections
+    // MARK: - Hero
 
     private var heroSection: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "star.circle.fill")
-                .font(.system(size: 64))
+        VStack(spacing: 10) {
+            Image(systemName: "bolt.circle.fill")
+                .font(.system(size: 60))
                 .foregroundStyle(.indigo)
+
             Text("Reply without limits.")
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
-            Text("Upgrade to Pro for unlimited AI replies every day.")
+
+            Text("Get Pro for unlimited AI replies, custom tone profiles, and priority generation.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
     }
 
-    private let proFeatures: [(icon: String, text: String)] = [
-        ("infinity",               "Unlimited replies per day"),
-        ("bookmark.fill",          "Unlimited saved replies"),
-        ("person.2.fill",          "Unlimited contact memory"),
-        ("wand.and.stars",         "Priority reply generation"),
-        ("heart.fill",             "Support indie development"),
+    // MARK: - Comparison Table
+
+    private struct FeatureRow: Identifiable {
+        var id: String { label }   // stable — label strings are fixed constants
+        let icon: String
+        let label: String
+        let free: String
+        let pro: String
+    }
+
+    private let rows: [FeatureRow] = [
+        FeatureRow(icon: "wand.and.stars",     label: "AI replies / day",       free: "10",             pro: "Unlimited"),
+        FeatureRow(icon: "slider.horizontal.3",label: "Custom tone profiles",    free: "–",              pro: "✓"),
+        FeatureRow(icon: "arrow.2.squarepath", label: "Rewrite chip",           free: "–",              pro: "✓"),
+        FeatureRow(icon: "bell.badge",         label: "Promise reminders",      free: "–",              pro: "✓"),
+        FeatureRow(icon: "bookmark.fill",      label: "Saved replies",          free: "Limited",        pro: "Unlimited"),
+        FeatureRow(icon: "person.2.fill",      label: "Contact memory",         free: "Limited",        pro: "Unlimited"),
+        FeatureRow(icon: "heart.fill",         label: "Support indie dev",      free: "–",              pro: "✓"),
     ]
 
-    private var featuresSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            ForEach(proFeatures, id: \.text) { feature in
-                HStack(spacing: 14) {
-                    Image(systemName: feature.icon)
+    private var comparisonTable: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Spacer()
+                Text("Free")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+                    .frame(width: 72, alignment: .center)
+                Text("Pro")
+                    .font(.caption.bold())
+                    .foregroundStyle(.indigo)
+                    .frame(width: 72, alignment: .center)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 8)
+
+            Divider()
+
+            ForEach(rows) { row in
+                HStack(spacing: 10) {
+                    Image(systemName: row.icon)
                         .font(.body)
                         .foregroundStyle(.indigo)
                         .frame(width: 24)
-                    Text(feature.text)
-                        .font(.body)
+
+                    Text(row.label)
+                        .font(.subheadline)
+
+                    Spacer()
+
+                    Text(row.free)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 72, alignment: .center)
+
+                    Text(row.pro)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(row.pro == "–" ? .secondary : .indigo)
+                        .frame(width: 72, alignment: .center)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+
+                Divider()
             }
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    private var pricingSection: some View {
-        VStack(spacing: 16) {
-            // Price
-            VStack(spacing: 4) {
-                if let product {
-                    Text(product.displayPrice)
-                        .font(.system(size: 40, weight: .bold))
-                    Text("per month · cancel anytime")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ProgressView()
-                        .frame(height: 50)
-                }
-            }
+    // MARK: - Package Picker
 
-            // CTA
+    private var packagePicker: some View {
+        VStack(spacing: 10) {
+            ForEach(packages.indices, id: \.self) { idx in
+                let pkg = packages[idx]
+                PackageCard(
+                    package: pkg,
+                    isSelected: selectedPackageIndex == idx,
+                    onSelect: { selectedPackageIndex = idx }
+                )
+            }
+        }
+    }
+
+    // MARK: - CTA
+
+    private var ctaSection: some View {
+        VStack(spacing: 12) {
             Button(action: purchase) {
                 Group {
-                    if isLoading {
+                    if rcService.isLoading {
                         ProgressView().tint(.white)
                     } else {
-                        Text("Start Pro")
+                        Text(selectedPackage.map { "Start Pro — \($0.localizedPriceString)" } ?? "Start Pro")
                             .font(.headline)
                     }
                 }
@@ -117,45 +177,117 @@ struct PaywallView: View {
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
-            .disabled(isLoading || product == nil)
+            .disabled(rcService.isLoading || selectedPackage == nil)
 
-            // Free tier reminder
-            VStack(spacing: 4) {
-                HStack {
-                    Image(systemName: "checkmark")
-                    Text("Free plan: 5 replies/day forever")
-                }
+            Label("10 replies/day free — always", systemImage: "checkmark.circle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            }
         }
     }
+
+    // MARK: - Legal
 
     private var legalFooter: some View {
-        VStack(spacing: 4) {
-            Text("Subscription auto-renews monthly. Cancel anytime in App Store settings.")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-                .multilineTextAlignment(.center)
-        }
+        Text("Subscriptions auto-renew unless cancelled at least 24 hours before the renewal date. Manage in App Store Settings.")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+            .multilineTextAlignment(.center)
     }
 
-    // MARK: - Logic
-
-    private func loadProduct() async {
-        product = try? await Product.products(for: [AppConstants.StoreKit.proMonthlyProductID]).first
-    }
+    // MARK: - Actions
 
     private func purchase() {
+        guard let pkg = selectedPackage else { return }
         Task {
-            isLoading = true
-            defer { isLoading = false }
             do {
-                try await appState.purchasePro()
+                try await rcService.purchase(package: pkg)
                 dismiss()
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+}
+
+// MARK: - Package Card
+
+private struct PackageCard: View {
+    let package: Package
+    let isSelected: Bool
+    let onSelect: () -> Void
+
+    private var isBestValue: Bool {
+        package.packageType == .annual
+    }
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text(package.storeProduct.localizedTitle)
+                            .font(.headline)
+                        if isBestValue {
+                            Text("BEST VALUE")
+                                .font(.caption2.bold())
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.indigo.opacity(0.15))
+                                .foregroundStyle(.indigo)
+                                .clipShape(Capsule())
+                        }
+                    }
+                    if let intro = package.storeProduct.introductoryDiscount {
+                        Text("Free \(intro.subscriptionPeriod.periodTitle) trial")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(package.localizedPriceString)
+                        .font(.headline)
+                    if package.packageType == .annual,
+                       let monthlyEquiv = annualMonthlyEquiv {
+                        Text("\(monthlyEquiv)/mo")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .padding(16)
+            .background(isSelected ? Color.indigo.opacity(0.08) : Color(.secondarySystemBackground))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(isSelected ? Color.indigo : Color.clear, lineWidth: 2)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var annualMonthlyEquiv: String? {
+        let price = package.storeProduct.price as Decimal
+        let monthly = price / 12
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = package.storeProduct.priceLocale
+        return formatter.string(from: monthly as NSDecimalNumber)
+    }
+}
+
+// MARK: - Period helper
+
+private extension SubscriptionPeriod {
+    var periodTitle: String {
+        switch unit {
+        case .day:   return value == 1 ? "1-day" : "\(value)-day"
+        case .week:  return value == 1 ? "1-week" : "\(value)-week"
+        case .month: return value == 1 ? "1-month" : "\(value)-month"
+        case .year:  return value == 1 ? "1-year" : "\(value)-year"
+        @unknown default: return "\(value) period"
         }
     }
 }

@@ -3,12 +3,18 @@ import SwiftUI
 @main
 struct KChimeApp: App {
     @StateObject private var appState = AppState()
+    @ObservedObject private var rcService = RevenueCatService.shared
     private let persistence = PersistenceController.shared
+
+    init() {
+        RevenueCatService.configure()
+    }
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
+                .environmentObject(rcService)
                 .environment(\.managedObjectContext, persistence.container.viewContext)
                 .onOpenURL { url in handleDeepLink(url) }
         }

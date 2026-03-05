@@ -1,0 +1,207 @@
+{
+  "title": "KChime Dashboard Metric Definitions",
+  "version": "1.0.0",
+  "description": "Metric queries and cohort definitions for PostHog / Amplitude / Datadog dashboards. All queries reference only the event names and property keys defined in event-schema.json.",
+
+  "dimensions": {
+    "device_id_hash": "Consistent anonymous device identifier (SHA-256 truncated). Stable within a device; resets on app reinstall.",
+    "tone_profile":   "Selected tone at time of event (Professional | Friendly | Direct | Custom).",
+    "feature":        "keyboard | share_extension",
+    "billing_period": "monthly | annual (set on subscription_started only)"
+  },
+
+  "metrics": {
+
+    "activation": {
+      "description": "Percentage of new installs that complete the full onboarding and fire their first generation within 24 hours.",
+      "definition": {
+        "numerator":   "distinct device_id_hash where onboarding_completed AND generation_completed fired within same calendar day",
+        "denominator": "distinct device_id_hash where app_opened with is_first_launch=true",
+        "window":      "24 hours from first app_opened"
+      },
+      "target": "> 40%",
+      "posthog_insight": {
+        "type": "funnel",
+        "steps": ["app_opened", "onboarding_completed", "generation_completed"],
+        "conversion_window_hours": 24
+      }
+    },
+
+    "dau": {
+      "description": "Daily Active Users — distinct devices that fire at least one generation_completed per day.",
+      "definition": {
+        "event":       "generation_completed",
+        "aggregate":   "count_distinct(device_id_hash)",
+        "granularity": "day"
+      },
+      "posthog_insight": {
+        "type": "trends",
+        "event": "generation_completed",
+        "math": "dau"
+      }
+    },
+
+    "wau": {
+      "description": "Weekly Active Users — rolling 7-day window of distinct devices with generation_completed.",
+      "definition": {
+        "event":       "generation_completed",
+        "aggregate":   "count_distinct(device_id_hash)",
+        "granularity": "week",
+        "rolling":     true,
+        "window_days": 7
+      }
+    },
+
+    "dau_wau_ratio": {
+      "description": "Stickiness ratio — DAU / WAU. Target > 0.20 indicates healthy daily habit formation.",
+      "formula":     "dau / wau",
+      "target":      "> 0.20"
+    },
+
+    "retention_cohorts": {
+      "description": "Day-N retention measured from the device's first onboarding_completed event.",
+      "cohort_entry_event": "onboarding_completed",
+      "return_event":       "generation_completed",
+      "intervals_days":     [1, 3, 7, 14, 30],
+      "targets": {
+        "day_1":  "> 30%",
+        "day_7":  "> 15%",
+        "day_30": "> 8%"
+      },
+      "posthog_insight": {
+        "type": "retention",
+        "target_event": "generation_completed",
+        "start_entity": "onboarding_completed",
+        "period": "Day",
+        "total_intervals": 30
+      }
+    },
+
+    "conversion_funnel": {
+      "description": "Full funnel from install to paid subscriber.",
+      "steps": [
+        {
+          "name":  "Install",
+          "event": "app_opened",
+          "filter": { "is_first_launch": true }
+        },
+        {
+          "name":  "Onboarding started",
+          "event": "onboarding_step_viewed",
+          "filter": { "step": "value_prop" }
+        },
+        {
+          "name":  "Onboarding completed",
+          "event": "onboarding_completed"
+        },
+        {
+          "name":  "First generation",
+          "event": "generation_completed",
+          "filter": { "success": true }
+        },
+        {
+          "name":  "Paywall viewed",
+          "event": "paywall_viewed"
+        },
+        {
+          "name":  "Subscriber",
+          "event": "subscription_started"
+        }
+      ],
+      "conversion_window_hours": 168,
+      "posthog_insight": {
+        "type": "funnel",
+        "funnel_window_interval": 7,
+        "funnel_window_interval_unit": "day"
+      }
+    },
+
+    "onboarding_drop_off": {
+      "description": "Step-by-step completion rate within the onboarding funnel.",
+      "steps_in_order": ["value_prop", "privacy", "tone_picker", "contacts", "keyboard_setup", "first_success"],
+      "event":          "onboarding_step_viewed",
+      "break_event":    "onboarding_abandoned",
+      "note":           "Break at keyboard_setup is expected to be higher — enabling a keyboard extension has OS friction."
+    },
+
+    "generation_success_rate": {
+      "description": "Percentage of generation_completed events where success=true.",
+      "formula":     "count(success=true) / count(generation_completed) per day",
+      "target":      "> 95%"
+    },
+
+    "p50_p95_latency": {
+      "description": "Median and 95th-percentile generation latency from generation_completed.latency_ms.",
+      "targets": {
+        "p50_ms": "< 1500",
+        "p95_ms": "< 4000"
+      },
+      "posthog_insight": {
+        "type": "trends",
+        "event": "generation_completed",
+        "math": "median",
+        "math_property": "latency_ms"
+      }
+    },
+
+    "paywall_conversion_rate": {
+      "description": "Percentage of paywall_viewed events followed by subscription_started within 30 minutes.",
+      "numerator":   "subscription_started within 30 min of paywall_viewed on same device",
+      "denominator": "paywall_viewed",
+      "breakdown":   "paywall_source",
+      "target":      "> 5%"
+    },
+
+    "rewrite_chip_block_rate": {
+      "description": "Percentage of Pro chip taps (is_pro_chip=true) blocked due to free tier. High rate = conversion opportunity.",
+      "formula":     "count(rewrite_chip_blocked) / count(tone_chip_tapped where is_pro_chip=true)",
+      "action":      "Trigger paywall_viewed(source=pro_chip_tapped) immediately after."
+    },
+
+    "promise_set_rate": {
+      "description": "Percentage of detected promise banners confirmed (vs dismissed). Measures reminder feature stickiness.",
+      "numerator":   "count(promise_confirmed)",
+      "denominator": "count(promise_detected)",
+      "target":      "> 50%"
+    },
+
+    "generation_per_dau": {
+      "description": "Average number of generations per active device per day. Tracks habit depth.",
+      "formula":     "count(generation_completed) / count_distinct(device_id_hash) per day",
+      "target":      "> 2.5"
+    },
+
+    "feature_breakdown": {
+      "description": "Split of generation_completed by feature (keyboard vs share_extension).",
+      "event":     "generation_completed",
+      "breakdown": "feature"
+    },
+
+    "tone_profile_distribution": {
+      "description": "Distribution of tone_profile across generation_completed. Shows default preferences.",
+      "event":     "generation_completed",
+      "breakdown": "tone_profile"
+    }
+  },
+
+  "alerts": {
+    "generation_success_rate_drop": {
+      "metric":     "generation_success_rate",
+      "threshold":  "< 90% over a 15-minute window",
+      "severity":   "critical",
+      "action":     "Page on-call — likely AI provider outage"
+    },
+    "p95_latency_spike": {
+      "metric":     "p95_latency",
+      "threshold":  "> 6000ms over a 5-minute window",
+      "severity":   "warning",
+      "action":     "Check AI provider status page"
+    },
+    "dau_drop": {
+      "metric":     "dau",
+      "threshold":  "< 70% of 7-day trailing average",
+      "severity":   "warning",
+      "action":     "Check App Store reviews and crash reports"
+    }
+  }
+}

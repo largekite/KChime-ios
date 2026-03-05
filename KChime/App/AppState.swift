@@ -1,6 +1,6 @@
 import SwiftUI
 import KeychainSwift
-import StoreKit
+import RevenueCat
 
 @MainActor
 final class AppState: ObservableObject {
@@ -11,14 +11,13 @@ final class AppState: ObservableObject {
 
     private let defaults: UserDefaults
     private let keychain = KeychainSwift()
-    private var transactionListener: Task<Void, Error>?
 
     init() {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         self.defaults = defaults
         self.onboardingComplete = defaults.bool(forKey: AppConstants.UserDefaultsKey.onboardingComplete)
         self.privacyAccepted = defaults.bool(forKey: AppConstants.UserDefaultsKey.privacyAccepted)
-        self.isPro = defaults.bool(forKey: AppConstants.UserDefaultsKey.isProUser)
+        self.isPro = EntitlementStore.shared.isPro
 
         if let data = defaults.data(forKey: AppConstants.UserDefaultsKey.toneProfile),
            let profile = try? JSONDecoder().decode(ToneProfile.self, from: data) {
@@ -27,11 +26,12 @@ final class AppState: ObservableObject {
             self.toneProfile = .defaultProfile
         }
 
-        transactionListener = listenForTransactions()
-    }
-
-    deinit {
-        transactionListener?.cancel()
+        // Mirror RevenueCatService's isPro into this object whenever it changes
+        Task {
+            for await pro in RevenueCatService.shared.$isPro.values {
+                self.isPro = pro
+            }
+        }
     }
 
     // MARK: - Onboarding
@@ -53,53 +53,23 @@ final class AppState: ObservableObject {
         }
     }
 
-    // MARK: - Subscription
-
-    func purchasePro() async throws {
-        guard let product = try await Product.products(for: [AppConstants.StoreKit.proMonthlyProductID]).first else {
-            throw StoreError.productNotFound
-        }
-        let result = try await product.purchase()
-        switch result {
-        case .success(let verification):
-            switch verification {
-            case .verified(let transaction):
-                await transaction.finish()
-                unlockPro()
-            case .unverified:
-                throw StoreError.verificationFailed
-            }
-        case .userCancelled, .pending:
-            break
-        @unknown default:
-            break
-        }
+    /// Persists the contact-context selection from onboarding.
+    func saveSelectedContacts(_ selectedIDs: Set<String>) {
+        let all = RelationshipProfileStore.shared.allProfiles
+        let priority = ["boss", "client", "teacher", "coworker", "family", "friend"]
+        let defaultID = priority.first { selectedIDs.contains($0) } ?? selectedIDs.first
+        RelationshipProfileStore.shared.selectedProfile =
+            defaultID.flatMap { id in all.first(where: { $0.id == id }) }
     }
 
-    func restorePurchases() async {
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result,
-               transaction.productID == AppConstants.StoreKit.proMonthlyProductID {
-                unlockPro()
-                await transaction.finish()
-            }
-        }
+    // MARK: - Subscription (delegates to RevenueCatService)
+
+    func purchasePro(package: Package) async throws {
+        try await RevenueCatService.shared.purchase(package: package)
     }
 
-    private func unlockPro() {
-        isPro = true
-        defaults.set(true, forKey: AppConstants.UserDefaultsKey.isProUser)
-    }
-
-    private func listenForTransactions() -> Task<Void, Error> {
-        Task.detached { [weak self] in
-            for await result in Transaction.updates {
-                if case .verified(let transaction) = result {
-                    await MainActor.run { self?.unlockPro() }
-                    await transaction.finish()
-                }
-            }
-        }
+    func restorePurchases() async throws {
+        try await RevenueCatService.shared.restorePurchases()
     }
 
     enum StoreError: Error, LocalizedError {

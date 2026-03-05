@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @State private var showDeleteConfirm = false
-    @State private var showToneEditor = false
     @State private var deleteError: String?
 
     var body: some View {
@@ -32,14 +31,27 @@ struct SettingsView: View {
 
                 // Tone
                 Section("Your Tone") {
-                    HStack {
-                        Text(appState.toneProfile.label)
-                        Spacer()
-                        Button("Edit") { showToneEditor = true }
-                            .font(.subheadline)
+                    NavigationLink(destination: ToneSettingsView(current: appState.toneProfile)) {
+                        HStack {
+                            Label(appState.toneProfile.label, systemImage: "wand.and.stars")
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Text(formalityLabel(appState.toneProfile.formality))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     LabeledContent("Length", value: appState.toneProfile.lengthPreference.displayName)
-                    LabeledContent("Formality", value: formalityLabel(appState.toneProfile.formality))
+                    LabeledContent("Emoji", value: appState.toneProfile.emojiEnabled ? "On" : "Off")
+                    if let custom = appState.toneProfile.customInstructions, !custom.isEmpty {
+                        LabeledContent("Custom instructions") {
+                            Text(custom)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.trailing)
+                        }
+                    }
                 }
 
                 // Privacy
@@ -61,12 +73,6 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
-            .sheet(isPresented: $showToneEditor) {
-                ToneProfileSetupView { profile in
-                    appState.saveToneProfile(profile)
-                    showToneEditor = false
-                }
-            }
             .confirmationDialog(
                 "Delete all your data?",
                 isPresented: $showDeleteConfirm,

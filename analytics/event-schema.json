@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KChime Analytics Event Catalog",
+  "version": "1.0.0",
+  "description": "Canonical event schema. All values are enums or primitives — no freeform user text.",
+  "privacy": {
+    "pii_policy": "No message content, contact names, emails, phone numbers, or location data are ever included in any event property.",
+    "identity": "Devices are identified by a one-way SHA-256 hash of an anonymous UUID stored in App Group UserDefaults. No Apple User ID is forwarded.",
+    "char_count_policy": "Character counts are bucketed (xs/s/m/l/xl) before transmission. Exact counts are never sent."
+  },
+
+  "shared_properties": {
+    "device_id_hash": {
+      "type": "string",
+      "description": "SHA-256(anonymousDeviceID).slice(0,16) — consistent for cohort analysis, not reversible to a real ID."
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of the event."
+    }
+  },
+
+  "enums": {
+    "feature":           ["keyboard", "share_extension"],
+    "onboarding_step":   ["value_prop", "privacy", "tone_picker", "contacts", "keyboard_setup", "first_success"],
+    "char_count_bucket": ["xs", "s", "m", "l", "xl"],
+    "paywall_source":    ["limit_reached", "pro_chip_tapped", "settings", "onboarding"],
+    "billing_period":    ["monthly", "annual"],
+    "tone_profile":      ["Professional", "Friendly", "Direct", "Custom"]
+  },
+
+  "events": {
+    "app_opened": {
+      "description": "Main app launched (foreground).",
+      "properties": {
+        "is_first_launch": { "type": "boolean", "description": "True on the very first launch after install." }
+      },
+      "required": ["is_first_launch"]
+    },
+
+    "onboarding_step_viewed": {
+      "description": "User reached an onboarding screen.",
+      "properties": {
+        "step":       { "type": "string", "$ref": "#/enums/onboarding_step" },
+        "step_index": { "type": "integer", "minimum": 0, "maximum": 5 }
+      },
+      "required": ["step", "step_index"]
+    },
+
+    "onboarding_completed": {
+      "description": "User finished the full onboarding flow.",
+      "properties": {}
+    },
+
+    "onboarding_abandoned": {
+      "description": "User left the onboarding flow without completing it.",
+      "properties": {
+        "at_step": { "type": "string", "$ref": "#/enums/onboarding_step" }
+      },
+      "required": ["at_step"]
+    },
+
+    "keyboard_opened": {
+      "description": "KChime keyboard extension became active.",
+      "properties": {}
+    },
+
+    "generation_requested": {
+      "description": "User tapped Generate in the keyboard or share extension. Fired before the API call.",
+      "properties": {
+        "feature":           { "type": "string", "$ref": "#/enums/feature" },
+        "tone_profile":      { "type": "string", "$ref": "#/enums/tone_profile" },
+        "relationship_used": { "type": "boolean", "description": "Whether a relationship profile was selected." }
+      },
+      "required": ["feature", "tone_profile", "relationship_used"]
+    },
+
+    "generation_completed": {
+      "description": "AI generation response received (success or failure).",
+      "properties": {
+        "feature":           { "type": "string", "$ref": "#/enums/feature" },
+        "tone_profile":      { "type": "string", "$ref": "#/enums/tone_profile" },
+        "latency_ms":        { "type": "integer", "minimum": 0, "description": "End-to-end round-trip in milliseconds." },
+        "success":           { "type": "boolean" },
+        "char_count_bucket": { "type": "string", "$ref": "#/enums/char_count_bucket", "description": "Bucket for the incoming message length." }
+      },
+      "required": ["feature", "tone_profile", "latency_ms", "success", "char_count_bucket"]
+    },
+
+    "suggestion_inserted": {
+      "description": "User tapped a suggestion to insert it into the text field.",
+      "properties": {
+        "feature":           { "type": "string", "$ref": "#/enums/feature" },
+        "suggestion_index":  { "type": "integer", "minimum": 0, "maximum": 2, "description": "0 = top suggestion." },
+        "char_count_bucket": { "type": "string", "$ref": "#/enums/char_count_bucket", "description": "Bucket for the inserted suggestion length." }
+      },
+      "required": ["feature", "suggestion_index", "char_count_bucket"]
+    },
+
+    "tone_chip_tapped": {
+      "description": "User tapped a tone modifier chip (Shorter, More formal, More friendly, Rewrite).",
+      "properties": {
+        "chip":        { "type": "string" },
+        "is_pro_chip": { "type": "boolean" }
+      },
+      "required": ["chip", "is_pro_chip"]
+    },
+
+    "rewrite_chip_blocked": {
+      "description": "Free user tapped the Pro-only Rewrite chip and was shown an upgrade prompt.",
+      "properties": {}
+    },
+
+    "paywall_viewed": {
+      "description": "Paywall screen presented.",
+      "properties": {
+        "source": { "type": "string", "$ref": "#/enums/paywall_source" }
+      },
+      "required": ["source"]
+    },
+
+    "subscription_started": {
+      "description": "User completed a purchase (new subscription).",
+      "properties": {
+        "product_id":     { "type": "string", "description": "App Store product identifier, e.g. com.kchime.app.pro.monthly" },
+        "billing_period": { "type": "string", "$ref": "#/enums/billing_period" }
+      },
+      "required": ["product_id", "billing_period"]
+    },
+
+    "subscription_restored": {
+      "description": "User successfully restored a previous purchase.",
+      "properties": {}
+    },
+
+    "subscription_cancelled": {
+      "description": "Entitlement revoked client-side (detected via RevenueCat delegate).",
+      "properties": {}
+    },
+
+    "promise_detected": {
+      "description": "PromiseDetector found a commitment phrase in an inserted suggestion.",
+      "properties": {}
+    },
+
+    "promise_confirmed": {
+      "description": "User tapped 'Set' to schedule a reminder from the promise banner.",
+      "properties": {}
+    },
+
+    "promise_dismissed": {
+      "description": "User dismissed the promise banner without setting a reminder.",
+      "properties": {}
+    },
+
+    "share_extension_opened": {
+      "description": "KChime share extension activated.",
+      "properties": {}
+    },
+
+    "share_extension_completed": {
+      "description": "Share extension flow finished.",
+      "properties": {
+        "success": { "type": "boolean" }
+      },
+      "required": ["success"]
+    }
+  }
+}

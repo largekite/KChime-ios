@@ -3,10 +3,32 @@ import KeychainSwift
 
 // MARK: - Models
 
+/// Describes the recipient relationship; sent alongside ToneProfilePayload.
+/// All numeric axes are 0–10, mirroring RelationshipProfile.
+public struct RelationshipProfilePayload: Encodable {
+    public let name: String
+    public let formality: Int      // 0–10
+    public let warmth: Int         // 0–10
+    public let brevity: Int        // 0–10
+    public let emojiAllowed: Bool
+    public let directness: Int     // 0–10
+
+    public init(name: String, formality: Int, warmth: Int, brevity: Int,
+                emojiAllowed: Bool, directness: Int) {
+        self.name = name
+        self.formality = formality
+        self.warmth = warmth
+        self.brevity = brevity
+        self.emojiAllowed = emojiAllowed
+        self.directness = directness
+    }
+}
+
 public struct ReplyRequest: Encodable {
     public let featureKey: String
     public let receivedMessage: String
     public let toneProfile: ToneProfilePayload
+    public let relationshipProfile: RelationshipProfilePayload?
     public let contactNotes: String?
     public let deviceID: String
 
@@ -14,11 +36,13 @@ public struct ReplyRequest: Encodable {
         featureKey: String,
         receivedMessage: String,
         toneProfile: ToneProfilePayload,
+        relationshipProfile: RelationshipProfilePayload? = nil,
         contactNotes: String? = nil
     ) {
         self.featureKey = featureKey
         self.receivedMessage = receivedMessage
         self.toneProfile = toneProfile
+        self.relationshipProfile = relationshipProfile
         self.contactNotes = contactNotes
         self.deviceID = KChimeAPIClient.deviceID
     }
@@ -48,8 +72,16 @@ public struct ToneProfilePayload: Encodable {
 
 public struct ReplyResponse: Decodable {
     public let suggestions: [String]
+    public let longerAlternative: String
     public let remaining: Int
     public let limit: Int
+}
+
+/// Separate struct for the /usage endpoint which does not return suggestions.
+public struct UsageResponse: Decodable {
+    public let remaining: Int
+    public let limit: Int
+    public let feature: String
 }
 
 public struct APIError: Decodable, Error {
@@ -126,8 +158,49 @@ public final class KChimeAPIClient: @unchecked Sendable {
         }
 
         let (data, _) = try await session.data(for: urlRequest)
-        let result = try JSONDecoder().decode(ReplyResponse.self, from: data)
+        let result = try JSONDecoder().decode(UsageResponse.self, from: data)
         return (result.remaining, result.limit)
+    }
+
+    // MARK: - Sign in with Apple
+
+    public struct AuthResponse: Decodable {
+        public let token: String
+        public let isNewUser: Bool
+    }
+
+    public func signInWithApple(
+        identityToken: String,
+        authorizationCode: String,
+        givenName: String? = nil,
+        familyName: String? = nil
+    ) async throws -> AuthResponse {
+        let url = URL(string: "\(AppConstants.apiBaseURL)/api/auth/apple")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let body: [String: Any?] = [
+            "identityToken": identityToken,
+            "authorizationCode": authorizationCode,
+            "deviceID": Self.deviceID,
+            "fullName": (givenName != nil || familyName != nil)
+                ? ["givenName": givenName, "familyName": familyName]
+                : nil,
+        ]
+        urlRequest.httpBody = try JSONSerialization.data(
+            withJSONObject: body.compactMapValues { $0 }
+        )
+
+        let (data, response) = try await session.data(for: urlRequest)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard http.statusCode == 200 else {
+            let apiErr = try? JSONDecoder().decode(APIError.self, from: data)
+            throw KChimeError.unknown(apiErr?.error ?? "Auth failed: HTTP \(http.statusCode)")
+        }
+        return try JSONDecoder().decode(AuthResponse.self, from: data)
     }
 
     // MARK: - Account deletion

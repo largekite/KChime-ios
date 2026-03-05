@@ -32,13 +32,15 @@ final class KeyboardViewController: UIInputViewController {
         hostingController = hosting
     }
 
-    // Called by KeyboardView to switch to next keyboard (globe tap)
+    /// Switch to the next system keyboard (globe button).
     func advanceToNextKeyboard() {
         advanceToNextInputMode()
     }
 
-    // Called by KeyboardView to dismiss keyboard
-    func dismissKeyboard() {
-        dismissKeyboard()
+    /// Dismiss the keyboard — called by the down-chevron button in the saved bar.
+    func dismissKeyboardAction() {
+        // dismissKeyboard() is a UIInputViewController method that hides the keyboard.
+        // We alias it here to avoid a recursive call from the SwiftUI side.
+        (self as UIInputViewController).dismissKeyboard()
     }
 }
