@@ -108,7 +108,7 @@ extension RelationshipProfile {
 /// shared App Group UserDefaults so both the main app and keyboard extension
 /// stay in sync without a CoreData MOC.
 final class RelationshipProfileStore {
-    static let shared = RelationshipProfileStore()
+    nonisolated(unsafe) static let shared = RelationshipProfileStore()
 
     private let defaults: UserDefaults
     private let selectedIDKey = "kchime_selected_relationship_id"

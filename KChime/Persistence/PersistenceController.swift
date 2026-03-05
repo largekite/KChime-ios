@@ -1,7 +1,7 @@
 import CoreData
 
 final class PersistenceController {
-    static let shared = PersistenceController()
+    nonisolated(unsafe) static let shared = PersistenceController()
 
     let container: NSPersistentCloudKitContainer
 
@@ -54,7 +54,7 @@ final class PersistenceController {
 
     // MARK: - Preview helper
 
-    static var preview: PersistenceController = {
+    nonisolated(unsafe) static var preview: PersistenceController = {
         let controller = PersistenceController(inMemory: true)
         let ctx = controller.container.viewContext
 

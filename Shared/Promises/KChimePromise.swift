@@ -17,7 +17,7 @@ struct KChimePromise: Codable, Identifiable, Equatable {
 // MARK: - Persistence
 
 final class PromiseStore {
-    static let shared = PromiseStore()
+    nonisolated(unsafe) static let shared = PromiseStore()
 
     private let defaults: UserDefaults
     private let key = "kchime_promises"
