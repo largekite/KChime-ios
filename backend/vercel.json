@@ -4,12 +4,11 @@
   "outputDirectory": "dist",
   "functions": {
     "dist/vercel.js": {
-      "runtime": "nodejs20.x",
       "maxDuration": 30
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/dist/vercel.js" }
+    { "source": "/(.*)", "destination": "/dist/vercel.js" }
   ],
   "env": {
     "NODE_ENV": "production"
