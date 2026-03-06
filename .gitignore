@@ -31,3 +31,6 @@ Secrets.swift
 
 # Build artifacts
 build/
+dist/
+node_modules/
+backend/api/index.js
