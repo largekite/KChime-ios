@@ -26,8 +26,8 @@ export default async function handler(
 
   const fetchReq = new Request(url.toString(), {
     method: req.method ?? "GET",
-    headers: req.headers as HeadersInit,
-    body: body && body.length > 0 ? body : undefined,
+    headers: req.headers as Record<string, string>,
+    ...(body && body.length > 0 ? { body } : {}),
   });
 
   const response = await app.fetch(fetchReq);

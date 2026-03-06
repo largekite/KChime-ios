@@ -14,14 +14,14 @@ import { z } from "zod";
 import { optionalAuth } from "../lib/auth/middleware.js";
 import { getUsage, recordUsage } from "../lib/db/client.js";
 import { checkRateLimit, REPLY_RATE_LIMIT, REPLY_RATE_WINDOW_MS } from "../lib/rate-limit/index.js";
-import { FallbackAIProvider } from "../lib/ai/index.js";
+import { createAIProvider } from "../lib/ai/index.js";
 import type { GenerateResult } from "../lib/ai/index.js";
 import { hashRequestBody, getCachedResult, setCachedResult } from "../lib/cache/requestCache.js";
 import { checkSafety } from "../lib/safety/classifier.js";
 import { emitTelemetry } from "../lib/telemetry/index.js";
 import { isDailyBudgetAvailable, recordDailyTokens } from "../lib/cost/guardrails.js";
 
-const ai = new FallbackAIProvider();
+const ai = createAIProvider();
 const generateRepliesRouter = new Hono();
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────

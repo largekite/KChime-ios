@@ -51,6 +51,7 @@ struct HomeView: View {
     // Voice input
     @StateObject private var speechRecognizer = SpeechRecognizer(continuous: false)
     @State private var micError: String? = nil
+    @State private var generateButtonPulse = false
 
     var body: some View {
         NavigationStack {
@@ -76,6 +77,19 @@ struct HomeView: View {
         .onChange(of: speechRecognizer.transcript) { _, newValue in
             if !newValue.isEmpty {
                 inputText = newValue
+            }
+        }
+        .onChange(of: speechRecognizer.isListening) { _, isListening in
+            if !isListening && !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
+                    generateButtonPulse = true
+                }
+                Task {
+                    try? await Task.sleep(for: .milliseconds(350))
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        generateButtonPulse = false
+                    }
+                }
             }
         }
     }
@@ -169,6 +183,7 @@ struct HomeView: View {
                 .background(canGenerate ? Color.indigo : Color.indigo.opacity(0.4))
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .scaleEffect(generateButtonPulse ? 1.06 : 1.0)
             }
             .disabled(!canGenerate)
         }

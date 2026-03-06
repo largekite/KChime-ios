@@ -188,7 +188,9 @@ const FALLBACK_SHORTER = "Got it, thanks.";
  * Tolerates minor JSON formatting issues and falls back to line-based parsing.
  */
 export function parseGenerateResult(raw: string): GenerateResult {
-  const trimmed = raw.trim();
+  // Strip markdown code fences (```json ... ``` or ``` ... ```)
+  let trimmed = raw.trim();
+  trimmed = trimmed.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
 
   // Try direct JSON parse
   try {

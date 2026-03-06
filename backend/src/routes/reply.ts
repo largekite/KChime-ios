@@ -7,9 +7,9 @@ import { z } from "zod";
 import { optionalAuth } from "../lib/auth/middleware.js";
 import { getUsage, recordUsage } from "../lib/db/client.js";
 import { checkRateLimit, REPLY_RATE_LIMIT, REPLY_RATE_WINDOW_MS } from "../lib/rate-limit/index.js";
-import { FallbackAIProvider } from "../lib/ai/index.js";
+import { createAIProvider } from "../lib/ai/index.js";
 
-const ai = new FallbackAIProvider();
+const ai = createAIProvider();
 const replyRouter = new Hono();
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────

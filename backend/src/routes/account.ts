@@ -6,7 +6,8 @@ import { Hono } from "hono";
 import { requireAuth, optionalAuth } from "../lib/auth/middleware.js";
 import { deleteUser } from "../lib/db/client.js";
 import { getEntitlement } from "../lib/payments/revenuecat.js";
-import { sql } from "@vercel/postgres";
+import postgres from "postgres";
+const sql = postgres(process.env["DATABASE_URL"]!, { ssl: "require", prepare: false });
 
 const accountRouter = new Hono();
 
