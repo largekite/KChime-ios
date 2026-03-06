@@ -5,7 +5,11 @@ import Foundation
 public enum AppConstants {
     public static let appGroupID = "group.com.kchime.shared"
     public static let keychainService = "com.kchime.app"
-    public static let apiBaseURL = "https://kchime.vercel.app"  // update for production
+    // Local dev (Simulator):      http://localhost:3000
+    // Physical device on same WiFi: http://YOUR_MAC_IP:3000
+    // Production: replace with your deployed Hono backend URL
+    //             (NOT https://kchime.vercel.app — that is the Next.js web app)
+    public static let apiBaseURL = "http://localhost:3000"
 
     public enum UserDefaultsKey {
         public static let toneProfile = "kchime_tone_profile"

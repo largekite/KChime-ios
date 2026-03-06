@@ -30,6 +30,12 @@
     <array>
         <string>UIInterfaceOrientationPortrait</string>
     </array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <!-- Allows http://localhost during development; does NOT open up non-local HTTP -->
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
     <key>NSFaceIDUsageDescription</key>
     <string>KChime uses Face ID to protect your saved contact notes.</string>
     <key>NSMicrophoneUsageDescription</key>

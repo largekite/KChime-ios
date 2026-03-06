@@ -1,15 +1,15 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "functions": {
-    "dist/index.js": {
+    "dist/vercel.js": {
       "runtime": "nodejs20.x",
       "maxDuration": 30
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/dist/index.js" }
+    { "source": "/api/(.*)", "destination": "/dist/vercel.js" }
   ],
   "env": {
     "NODE_ENV": "production"
