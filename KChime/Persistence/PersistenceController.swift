@@ -3,13 +3,14 @@ import CoreData
 final class PersistenceController {
     nonisolated(unsafe) static let shared = PersistenceController()
 
-    let container: NSPersistentCloudKitContainer
+    let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "KChime")
+        container = NSPersistentContainer(name: "KChime")
 
-        let groupURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: AppConstants.appGroupID)!
+        let groupURL = (FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: AppConstants.appGroupID)
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!)
             .appendingPathComponent("KChime.sqlite")
 
         let description = inMemory
@@ -25,10 +26,6 @@ final class PersistenceController {
             description.url = URL(fileURLWithPath: "/dev/null")
         }
 
-        description.cloudKitContainerOptions = inMemory
-            ? nil
-            : NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.kchime.app")
-
         container.persistentStoreDescriptions = [description]
         container.loadPersistentStores { _, error in
             if let error {
@@ -37,7 +34,7 @@ final class PersistenceController {
             }
         }
         container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     }
 
     // MARK: - Nuke all local data (user-initiated)

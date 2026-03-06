@@ -18,11 +18,13 @@ public final class RevenueCatService: ObservableObject {
     // MARK: - Setup (call once on app launch)
 
     public static func configure() {
+        #if !targetEnvironment(simulator)
         Purchases.configure(withAPIKey: AppConstants.RevenueCat.publicKey)
         Purchases.shared.delegate = PurchaseDelegate.shared
         Task { @MainActor in
             await RevenueCatService.shared.refreshEntitlement()
         }
+        #endif
     }
 
     // MARK: - Identity
@@ -83,7 +85,7 @@ public final class RevenueCatService: ObservableObject {
     // MARK: - Internal
 
     func apply(customerInfo: CustomerInfo) {
-        let entitlement = customerInfo.entitlements[AppConstants.RevenueCat.proEntitlementID]
+        let entitlement = customerInfo.entitlements[AppConstants.StoreKit.proEntitlementID]
         let active = entitlement?.isActive == true
         let expiresAt = entitlement?.expirationDate
         EntitlementStore.shared.sync(isPro: active, expiresAt: expiresAt)

@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -24,7 +25,7 @@ struct SettingsView: View {
                                 .foregroundStyle(.indigo)
                         }
                         Button("Restore Purchases") {
-                            Task { await appState.restorePurchases() }
+                            Task { try? await appState.restorePurchases() }
                         }
                     }
                 }
@@ -51,6 +52,19 @@ struct SettingsView: View {
                                 .lineLimit(2)
                                 .multilineTextAlignment(.trailing)
                         }
+                    }
+                }
+
+                // Library
+                Section("Library") {
+                    NavigationLink(destination: SavedRepliesView()) {
+                        Label("Saved Replies", systemImage: "bookmark.fill")
+                    }
+                    NavigationLink(destination: ContactsView()) {
+                        Label("Contacts", systemImage: "person.2.fill")
+                    }
+                    NavigationLink(destination: PromisesListView()) {
+                        Label("Promises", systemImage: "bell.badge.fill")
                     }
                 }
 

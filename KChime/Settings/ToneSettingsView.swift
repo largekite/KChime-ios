@@ -224,7 +224,7 @@ struct ToneSettingsView: View {
                                 .fill(Color(.secondarySystemGroupedBackground))
                         )
 
-                    Text("Based on the sample message: "Running 10 min late to school pickup"")
+                    Text("Based on the sample message: \"Running 10 min late to school pickup\"")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }

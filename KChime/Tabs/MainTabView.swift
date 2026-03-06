@@ -10,19 +10,19 @@ struct MainTabView: View {
                     Label("Home", systemImage: "house.fill")
                 }
 
-            SavedRepliesView()
+            LiveListenView()
                 .tabItem {
-                    Label("Saved", systemImage: "bookmark.fill")
+                    Label("Live", systemImage: "waveform.circle.fill")
                 }
 
-            ContactsView()
+            PracticeView()
                 .tabItem {
-                    Label("Contacts", systemImage: "person.2.fill")
+                    Label("Practice", systemImage: "graduationcap.fill")
                 }
 
-            PromisesListView()
+            WorkReplyView()
                 .tabItem {
-                    Label("Promises", systemImage: "bell.badge.fill")
+                    Label("Work", systemImage: "briefcase.fill")
                 }
 
             SettingsView()

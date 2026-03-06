@@ -32,5 +32,9 @@
     </array>
     <key>NSFaceIDUsageDescription</key>
     <string>KChime uses Face ID to protect your saved contact notes.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>KChime uses the microphone to transcribe messages so you can get instant reply suggestions hands-free.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>KChime uses speech recognition to convert your spoken messages to text in real time.</string>
 </dict>
 </plist>

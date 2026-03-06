@@ -130,7 +130,7 @@ struct PaywallView: View {
 
                     Text(row.pro)
                         .font(.subheadline.bold())
-                        .foregroundStyle(row.pro == "–" ? .secondary : .indigo)
+                        .foregroundStyle(row.pro == "–" ? Color.secondary : .indigo)
                         .frame(width: 72, alignment: .center)
                 }
                 .padding(.horizontal, 16)
@@ -273,7 +273,7 @@ private struct PackageCard: View {
         let monthly = price / 12
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = package.storeProduct.priceLocale
+        formatter.currencyCode = package.storeProduct.currencyCode
         return formatter.string(from: monthly as NSDecimalNumber)
     }
 }

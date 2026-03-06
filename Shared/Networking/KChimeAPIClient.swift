@@ -31,19 +31,22 @@ public struct ReplyRequest: Encodable {
     public let relationshipProfile: RelationshipProfilePayload?
     public let contactNotes: String?
     public let deviceID: String
+    public let contextMode: String?   // e.g. "office", "party", "family"
 
     public init(
         featureKey: String,
         receivedMessage: String,
         toneProfile: ToneProfilePayload,
         relationshipProfile: RelationshipProfilePayload? = nil,
-        contactNotes: String? = nil
+        contactNotes: String? = nil,
+        contextMode: String? = nil
     ) {
         self.featureKey = featureKey
         self.receivedMessage = receivedMessage
         self.toneProfile = toneProfile
         self.relationshipProfile = relationshipProfile
         self.contactNotes = contactNotes
+        self.contextMode = contextMode
         self.deviceID = KChimeAPIClient.deviceID
     }
 }
