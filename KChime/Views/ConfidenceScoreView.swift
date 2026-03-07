@@ -84,7 +84,7 @@ struct ConfidenceBreakdownView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            ForEach(breakdown.dimensions, id: \.label) { dim in
+            ForEach(breakdown.dimensions) { dim in
                 HStack(spacing: 8) {
                     Image(systemName: dim.icon)
                         .font(.caption2)

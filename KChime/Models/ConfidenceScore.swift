@@ -35,15 +35,22 @@ struct ConfidenceBreakdown {
     let professionalism: ScoreDimension
     let brevity: ScoreDimension
 
-    var dimensions: [(label: String, icon: String, dimension: ScoreDimension)] {
+    var dimensions: [DimensionInfo] {
         [
-            ("Professional tone", "person.fill.checkmark", tone),
-            ("Clarity", "text.alignleft", clarity),
-            ("Politeness", "hand.wave.fill", politeness),
-            ("Professionalism", "briefcase.fill", professionalism),
-            ("Conciseness", "arrow.down.right.and.arrow.up.left", brevity),
+            DimensionInfo(label: "Professional tone", icon: "person.fill.checkmark", dimension: tone),
+            DimensionInfo(label: "Clarity", icon: "text.alignleft", dimension: clarity),
+            DimensionInfo(label: "Politeness", icon: "hand.wave.fill", dimension: politeness),
+            DimensionInfo(label: "Professionalism", icon: "briefcase.fill", dimension: professionalism),
+            DimensionInfo(label: "Conciseness", icon: "arrow.down.right.and.arrow.up.left", dimension: brevity),
         ]
     }
+}
+
+struct DimensionInfo: Identifiable {
+    let label: String
+    let icon: String
+    let dimension: ScoreDimension
+    var id: String { label }
 }
 
 enum ScoreDimension: String {
