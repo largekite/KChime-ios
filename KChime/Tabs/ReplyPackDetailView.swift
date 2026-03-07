@@ -19,7 +19,7 @@ struct ReplyPackDetailView: View {
     private var accentColor: Color {
         switch pack.color {
         case "orange": return .orange
-        case "indigo": return .indigo
+        case "indigo": return .teal
         case "green":  return .green
         case "red":    return .red
         case "teal":   return .teal

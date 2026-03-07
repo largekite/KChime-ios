@@ -22,10 +22,10 @@ struct ConfidenceBadge: View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: { withAnimation(.spring(response: 0.3)) { showBreakdown.toggle() } }) {
                 HStack(spacing: 6) {
-                    ScoreRing(score: score.overall, color: badgeColor, size: 28)
+                    ScoreRing(score: score.overall, color: badgeColor, size: 24)
 
-                    Text("Confidence: \(score.overall)")
-                        .font(.caption2.bold())
+                    Text("\(score.overall)")
+                        .font(.caption2.bold().monospacedDigit())
                         .foregroundStyle(badgeColor)
 
                     Text(score.label)
@@ -39,15 +39,19 @@ struct ConfidenceBadge: View {
                         .foregroundStyle(.tertiary)
                 }
                 .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.vertical, 5)
+                .background(badgeColor.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .padding(.horizontal, 12)
 
             if showBreakdown {
                 ConfidenceBreakdownView(breakdown: score.breakdown)
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 8)
+                    .padding(.top, 4)
+                    .padding(.bottom, 6)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }

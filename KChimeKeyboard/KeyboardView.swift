@@ -104,7 +104,7 @@ struct KeyboardView: View {
             HStack(spacing: 3) {
                 ForEach(0..<min(viewModel.limit, 5), id: \.self) { i in
                     Circle()
-                        .fill(i < viewModel.remaining ? Color.indigo : Color(.systemFill))
+                        .fill(i < viewModel.remaining ? Color.teal : Color(.systemFill))
                         .frame(width: 5, height: 5)
                 }
                 if viewModel.limit > 5 {
@@ -235,7 +235,7 @@ struct KeyboardView: View {
         VStack(spacing: 8) {
             Image(systemName: "text.bubble")
                 .font(.title2)
-                .foregroundStyle(Color.indigo.opacity(0.5))
+                .foregroundStyle(Color.teal.opacity(0.5))
             Text("Paste a message above to get reply suggestions")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -249,7 +249,7 @@ struct KeyboardView: View {
         VStack(spacing: 10) {
             HStack(alignment: .top, spacing: 10) {
                 Image(systemName: error.showsUpgradeButton ? "star.circle.fill" : "exclamationmark.triangle.fill")
-                    .foregroundStyle(error.showsUpgradeButton ? .indigo : .orange)
+                    .foregroundStyle(error.showsUpgradeButton ? .teal : .orange)
                     .font(.title3)
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -279,7 +279,7 @@ struct KeyboardView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.indigo))
+                    .background(Capsule().fill(Color.teal))
                 }
             }
         }
@@ -349,7 +349,7 @@ struct KeyboardView: View {
             Button(action: { Task { await viewModel.generate() } }) {
                 ZStack {
                     Circle()
-                        .fill(viewModel.receivedMessage.isEmpty ? Color(.systemFill) : Color.indigo)
+                        .fill(viewModel.receivedMessage.isEmpty ? Color(.systemFill) : Color.teal)
                         .frame(width: 36, height: 36)
                     if viewModel.isLoading {
                         ProgressView().tint(.white).scaleEffect(0.7)
@@ -411,7 +411,7 @@ private struct ProfileChipButton: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(
-                Capsule().fill(isSelected ? Color.indigo : Color(.tertiarySystemGroupedBackground))
+                Capsule().fill(isSelected ? Color.teal : Color(.tertiarySystemGroupedBackground))
             )
             .foregroundStyle(isSelected ? Color.white : Color.primary)
         }
@@ -452,7 +452,7 @@ struct SuggestionChip: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .background(Capsule().fill(Color.indigo.opacity(0.75)))
+                            .background(Capsule().fill(Color.teal.opacity(0.75)))
                     }
                     Text(text)
                         .font(.subheadline)
@@ -495,7 +495,7 @@ struct SuggestionChip: View {
             .contentShape(Rectangle())
             .background(
                 badge != nil
-                    ? Color.indigo.opacity(isInserted ? 0.1 : 0.04)
+                    ? Color.teal.opacity(isInserted ? 0.1 : 0.04)
                     : isInserted ? Color.green.opacity(0.07) : Color(.secondarySystemGroupedBackground)
             )
         }
@@ -524,7 +524,7 @@ struct ToneChipButton: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(Capsule().fill(
-                isActive ? Color.indigo : isDisabled ? Color(.systemFill) : Color(.tertiarySystemGroupedBackground)
+                isActive ? Color.teal : isDisabled ? Color(.systemFill) : Color(.tertiarySystemGroupedBackground)
             ))
             .foregroundStyle(isActive ? Color.white : isDisabled ? Color.secondary : Color.primary)
         }

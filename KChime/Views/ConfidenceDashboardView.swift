@@ -87,7 +87,7 @@ struct ConfidenceDashboardView: View {
                     title: "Avg Score",
                     value: store.todayAverageScore > 0 ? "\(store.todayAverageScore)" : "—",
                     icon: "chart.bar.fill",
-                    color: .indigo
+                    color: .teal
                 )
             }
         }
@@ -115,7 +115,7 @@ struct ConfidenceDashboardView: View {
                     title: "Avg Score",
                     value: store.weeklyAverageScore > 0 ? "\(store.weeklyAverageScore)" : "—",
                     icon: "chart.bar.fill",
-                    color: .indigo
+                    color: .teal
                 )
             }
 

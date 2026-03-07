@@ -51,7 +51,7 @@ struct PaywallView: View {
         VStack(spacing: 10) {
             Image(systemName: "bolt.circle.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
 
             Text("Reply without limits.")
                 .font(.title.bold())
@@ -74,7 +74,7 @@ struct PaywallView: View {
                     .frame(width: 72, alignment: .center)
                 Text("Pro")
                     .font(.caption.bold())
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
                     .frame(width: 72, alignment: .center)
             }
             .padding(.horizontal, 16)
@@ -86,7 +86,7 @@ struct PaywallView: View {
                 HStack(spacing: 10) {
                     Image(systemName: row.icon)
                         .font(.body)
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                         .frame(width: 24)
 
                     Text(row.label)
@@ -101,7 +101,7 @@ struct PaywallView: View {
 
                     Text(row.pro)
                         .font(.subheadline.bold())
-                        .foregroundStyle(row.pro == "–" ? Color.secondary : .indigo)
+                        .foregroundStyle(row.pro == "–" ? Color.secondary : .teal)
                         .frame(width: 72, alignment: .center)
                 }
                 .padding(.horizontal, 16)
@@ -123,7 +123,7 @@ struct PaywallView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.indigo)
+                    .background(.teal)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }

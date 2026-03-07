@@ -38,7 +38,7 @@ struct PrivacyDisclosureView: View {
                         HStack(alignment: .top, spacing: 16) {
                             Image(systemName: item.icon)
                                 .font(.title2)
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                                 .frame(width: 32)
 
                             VStack(alignment: .leading, spacing: 4) {
@@ -65,7 +65,7 @@ struct PrivacyDisclosureView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.indigo)
+                    .background(.teal)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }

@@ -24,7 +24,7 @@ struct ToneProfileSetupView: View {
             .padding(.horizontal, 24)
 
             ProgressView(value: Double(currentIndex), total: Double(samples.count))
-                .tint(.indigo)
+                .tint(.teal)
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
 
@@ -116,7 +116,7 @@ struct ToneProfileSetupView: View {
         VStack(spacing: 24) {
             Image(systemName: "person.crop.circle.badge.checkmark")
                 .font(.system(size: 64))
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
 
             VStack(spacing: 8) {
                 Text("Your tone:")
@@ -137,13 +137,13 @@ struct ToneProfileSetupView: View {
                             Spacer()
                             if detectedProfile.label == preset.label {
                                 Image(systemName: "checkmark")
-                                    .foregroundStyle(.indigo)
+                                    .foregroundStyle(.teal)
                             }
                         }
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(detectedProfile.label == preset.label ? Color.indigo : Color(.separator),
+                                .stroke(detectedProfile.label == preset.label ? Color.teal : Color(.separator),
                                         lineWidth: detectedProfile.label == preset.label ? 2 : 1)
                         )
                     }
@@ -157,7 +157,7 @@ struct ToneProfileSetupView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.indigo)
+                    .background(.teal)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }

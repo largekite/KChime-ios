@@ -15,7 +15,7 @@ struct KeyboardSetupView: View {
             VStack(spacing: 28) {
                 Image(systemName: "keyboard.fill")
                     .font(.system(size: 56))
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
 
                 VStack(spacing: 8) {
                     Text("Enable the Keyboard")
@@ -52,7 +52,7 @@ struct KeyboardSetupView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(.indigo)
+                        .background(.teal)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
@@ -138,7 +138,7 @@ struct SetupStep: View {
         HStack(alignment: .top, spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(isComplete ? Color.green : Color.indigo)
+                    .fill(isComplete ? Color.green : Color.teal)
                     .frame(width: 32, height: 32)
                 if isComplete {
                     Image(systemName: "checkmark")

@@ -75,7 +75,7 @@ struct PromisesListView: View {
         VStack(spacing: 16) {
             Image(systemName: "bell.badge")
                 .font(.system(size: 48))
-                .foregroundStyle(Color.indigo.opacity(0.5))
+                .foregroundStyle(Color.teal.opacity(0.5))
             Text("No Promises Yet")
                 .font(.headline)
             Text("When you insert a reply containing a commitment\n(\"I'll send it tonight\"), KChime will offer to set a reminder.")

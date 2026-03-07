@@ -10,16 +10,16 @@ struct MainTabView: View {
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
 
-            LiveListenView()
-                .tabItem { Label("Live", systemImage: "waveform.circle.fill") }
-                .tag(1)
-
             ReplyPacksView()
                 .tabItem { Label("Packs", systemImage: "tray.full.fill") }
-                .tag(2)
+                .tag(1)
 
             PracticeView()
                 .tabItem { Label("Practice", systemImage: "graduationcap.fill") }
+                .tag(2)
+
+            LiveListenView()
+                .tabItem { Label("Live", systemImage: "waveform.circle.fill") }
                 .tag(3)
 
             SettingsView()

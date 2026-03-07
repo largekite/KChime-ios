@@ -250,7 +250,7 @@ enum ReplyPacks {
         title: "Reply to Boss",
         description: "Professional replies for when your manager messages you",
         emoji: "👔",
-        color: "indigo",
+        color: "teal",
         scenarios: [
             ReplyScenario(
                 id: "rb-1",
