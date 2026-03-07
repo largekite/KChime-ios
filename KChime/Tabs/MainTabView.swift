@@ -14,19 +14,19 @@ struct MainTabView: View {
                 .tabItem { Label("Live", systemImage: "waveform.circle.fill") }
                 .tag(1)
 
-            PracticeView()
-                .tabItem { Label("Practice", systemImage: "graduationcap.fill") }
+            ReplyPacksView()
+                .tabItem { Label("Packs", systemImage: "tray.full.fill") }
                 .tag(2)
 
-            WorkReplyView()
-                .tabItem { Label("Work", systemImage: "briefcase.fill") }
+            PracticeView()
+                .tabItem { Label("Practice", systemImage: "graduationcap.fill") }
                 .tag(3)
 
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(4)
         }
-        .tint(.indigo)
+        .tint(.teal)
         .sheet(isPresented: $appState.deepLinkShowPaywall) {
             PaywallView()
         }
