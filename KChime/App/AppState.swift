@@ -6,6 +6,7 @@ final class AppState: ObservableObject {
     @Published var onboardingComplete: Bool
     @Published var privacyAccepted: Bool
     @Published var isPro: Bool
+    @Published var isMax: Bool
     @Published var toneProfile: ToneProfile
 
     // Deep-link routing state (set by KChimeApp, consumed by MainTabView)
@@ -20,6 +21,7 @@ final class AppState: ObservableObject {
         self.onboardingComplete = defaults.bool(forKey: AppConstants.UserDefaultsKey.onboardingComplete)
         self.privacyAccepted = defaults.bool(forKey: AppConstants.UserDefaultsKey.privacyAccepted)
         self.isPro = EntitlementStore.shared.isPro
+        self.isMax = EntitlementStore.shared.isMax
 
         if let data = defaults.data(forKey: AppConstants.UserDefaultsKey.toneProfile),
            let profile = try? JSONDecoder().decode(ToneProfile.self, from: data) {
@@ -59,8 +61,9 @@ final class AppState: ObservableObject {
 
     // MARK: - Subscription
 
-    /// Called after sign-in to reflect the server's Pro status in the UI.
+    /// Called after sign-in to reflect the server's tier in the UI.
     func refreshProStatus() {
         isPro = EntitlementStore.shared.isPro
+        isMax = EntitlementStore.shared.isMax
     }
 }

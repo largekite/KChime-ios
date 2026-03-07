@@ -170,6 +170,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
     public struct AuthResponse: Decodable {
         public let token: String
         public let isPro: Bool
+        public let isMax: Bool
         public let isNewUser: Bool
     }
 

@@ -17,7 +17,16 @@ public final class EntitlementStore: @unchecked Sendable {
         guard defaults.bool(forKey: AppConstants.UserDefaultsKey.isProUser) else {
             return false
         }
-        // Treat as free if the subscription has expired
+        if let expiresAt = proExpiresAt, expiresAt < Date() {
+            return false
+        }
+        return true
+    }
+
+    public var isMax: Bool {
+        guard defaults.bool(forKey: AppConstants.UserDefaultsKey.isMaxUser) else {
+            return false
+        }
         if let expiresAt = proExpiresAt, expiresAt < Date() {
             return false
         }
@@ -31,13 +40,16 @@ public final class EntitlementStore: @unchecked Sendable {
     }
 
     public var dailyLimit: Int {
-        isPro ? AppConstants.Feature.proLimit : AppConstants.Feature.freeLimit
+        if isMax { return AppConstants.Feature.maxLimit }
+        if isPro { return AppConstants.Feature.proLimit }
+        return AppConstants.Feature.freeLimit
     }
 
     // MARK: - Write (main app only)
 
-    public func sync(isPro: Bool, expiresAt: Date?) {
+    public func sync(isPro: Bool, isMax: Bool, expiresAt: Date?) {
         defaults.set(isPro, forKey: AppConstants.UserDefaultsKey.isProUser)
+        defaults.set(isMax, forKey: AppConstants.UserDefaultsKey.isMaxUser)
         if let date = expiresAt {
             defaults.set(date.timeIntervalSince1970, forKey: AppConstants.UserDefaultsKey.proExpiresAt)
         } else {
@@ -47,6 +59,7 @@ public final class EntitlementStore: @unchecked Sendable {
 
     public func revoke() {
         defaults.set(false, forKey: AppConstants.UserDefaultsKey.isProUser)
+        defaults.set(false, forKey: AppConstants.UserDefaultsKey.isMaxUser)
         defaults.removeObject(forKey: AppConstants.UserDefaultsKey.proExpiresAt)
     }
 }

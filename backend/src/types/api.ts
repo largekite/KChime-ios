@@ -93,6 +93,8 @@ export interface AuthAppleRequest {
 
 export interface AuthResponse {
   token: string;           // KChime session JWT
+  isPro: boolean;
+  isMax: boolean;
   isNewUser: boolean;
 }
 
@@ -132,6 +134,7 @@ export interface KChimeUser {
   appleUserID: string;
   deviceID?: string;
   isPro: boolean;
+  isMax: boolean;
   proExpiresAt?: Date;
   createdAt: Date;
 }

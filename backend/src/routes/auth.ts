@@ -54,6 +54,7 @@ authRouter.post("/apple", async (c) => {
   return c.json({
     token,
     isPro: user.isPro,
+    isMax: user.isMax,
     isNewUser: Date.now() - user.createdAt.getTime() < 5_000,
   });
 });

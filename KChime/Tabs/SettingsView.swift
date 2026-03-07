@@ -10,7 +10,15 @@ struct SettingsView: View {
             Form {
                 // Subscription
                 Section("Plan") {
-                    if appState.isPro {
+                    if appState.isMax {
+                        HStack {
+                            Label("Max — Unlimited replies", systemImage: "star.fill")
+                                .foregroundStyle(.indigo)
+                            Spacer()
+                            Link("Manage", destination: URL(string: "https://kchime.com/account")!)
+                                .font(.subheadline)
+                        }
+                    } else if appState.isPro {
                         HStack {
                             Label("Pro — 50 replies/day", systemImage: "star.fill")
                                 .foregroundStyle(.indigo)

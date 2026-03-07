@@ -4,7 +4,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
-    private let proURL = URL(string: "https://kchime.com/#upgrade")!
+    private let proURL = URL(string: "https://kchime.com/#pricing")!
 
     private struct FeatureRow: Identifiable {
         var id: String { label }

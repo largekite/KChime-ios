@@ -49,6 +49,10 @@ export async function runMigrations(): Promise<void> {
   await sql`
     ALTER TABLE usage_logs ADD COLUMN IF NOT EXISTS tokens_used INTEGER;
   `;
+
+  await sql`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS is_max BOOLEAN NOT NULL DEFAULT false;
+  `;
 }
 
 // ─── User Queries ─────────────────────────────────────────────────────────────
@@ -58,6 +62,7 @@ type UserRow = {
   apple_user_id: string;
   device_id: string | null;
   is_pro: boolean;
+  is_max: boolean;
   pro_expires_at: string | null;
   created_at: string;
 };
@@ -106,15 +111,22 @@ export async function deleteUser(userID: string): Promise<void> {
 
 const FREE_LIMIT = 10;
 const PRO_LIMIT = 50;
+const MAX_LIMIT = 100_000;
 
 export async function getUsage(params: {
   userID?: string;
   deviceID?: string;
   feature: string;
 }): Promise<{ used: number; limit: number; remaining: number }> {
-  const limit = params.userID
-    ? (await isProUser(params.userID)) ? PRO_LIMIT : FREE_LIMIT
-    : FREE_LIMIT;
+  let limit = FREE_LIMIT;
+  if (params.userID) {
+    const rows = await sql<{ is_pro: boolean; is_max: boolean }[]>`
+      SELECT is_pro, is_max FROM users WHERE id = ${params.userID}::uuid LIMIT 1
+    `;
+    const u = rows[0];
+    if (u?.is_max) limit = MAX_LIMIT;
+    else if (u?.is_pro) limit = PRO_LIMIT;
+  }
 
   let rows: { count: string }[];
   if (params.userID) {
@@ -182,11 +194,16 @@ export async function getDailyTokensFromDB(params: {
   return parseInt(rows[0]?.total ?? "0", 10);
 }
 
-async function isProUser(userID: string): Promise<boolean> {
-  const rows = await sql<{ is_pro: boolean }[]>`
-    SELECT is_pro FROM users WHERE id = ${userID}::uuid LIMIT 1
+export async function setUserMax(
+  appleUserID: string,
+  isMax: boolean,
+  expiresAt?: Date
+): Promise<void> {
+  await sql`
+    UPDATE users
+    SET is_max = ${isMax}, is_pro = ${isMax}, pro_expires_at = ${expiresAt?.toISOString() ?? null}
+    WHERE apple_user_id = ${appleUserID}
   `;
-  return rows[0]?.is_pro ?? false;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -196,6 +213,7 @@ function rowToUser(row: UserRow): KChimeUser {
     id: row.id,
     appleUserID: row.apple_user_id,
     isPro: row.is_pro,
+    isMax: row.is_max,
     createdAt: new Date(row.created_at),
     ...(row.device_id !== null ? { deviceID: row.device_id } : {}),
     ...(row.pro_expires_at !== null ? { proExpiresAt: new Date(row.pro_expires_at) } : {}),
