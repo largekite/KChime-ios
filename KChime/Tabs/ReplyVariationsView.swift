@@ -13,6 +13,7 @@ struct ReplyVariationsView: View {
     @State private var isGenerating = false
     @State private var generateError: String? = nil
     @State private var copiedIndex: Int? = nil
+    @State private var confidenceScores: [Int: ConfidenceScore] = [:]
 
     var body: some View {
         NavigationStack {
@@ -38,6 +39,13 @@ struct ReplyVariationsView: View {
                     Button("Done") { dismiss() }
                 }
             }
+            .onAppear { scoreSeedReplies() }
+        }
+    }
+
+    private func scoreSeedReplies() {
+        for (idx, reply) in scenario.seedReplies.enumerated() {
+            confidenceScores[idx] = ConfidenceScorer.score(reply)
         }
     }
 
@@ -160,25 +168,32 @@ struct ReplyVariationsView: View {
     // MARK: - Reply Row
 
     private func replyRow(text: String, index: Int) -> some View {
-        Button(action: { copy(text, index: index) }) {
-            HStack(spacing: 12) {
-                Image(systemName: copiedIndex == index ? "checkmark.circle.fill" : "doc.on.doc")
-                    .foregroundStyle(copiedIndex == index ? .green : accentColor)
-                    .font(.body)
-                    .frame(width: 24)
-                    .animation(.spring(response: 0.3), value: copiedIndex)
+        VStack(spacing: 0) {
+            Button(action: { copy(text, index: index) }) {
+                HStack(spacing: 12) {
+                    Image(systemName: copiedIndex == index ? "checkmark.circle.fill" : "doc.on.doc")
+                        .foregroundStyle(copiedIndex == index ? .green : accentColor)
+                        .font(.body)
+                        .frame(width: 24)
+                        .animation(.spring(response: 0.3), value: copiedIndex)
 
-                Text(text)
-                    .font(.subheadline)
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(text)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+
+            if let score = confidenceScores[index] {
+                ConfidenceBadge(score: score)
+                    .padding(.bottom, 4)
+            }
         }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Actions
@@ -197,6 +212,10 @@ struct ReplyVariationsView: View {
         generateError = nil
         aiVariations = []
         copiedIndex = nil
+        // Clear AI scores (keep seed scores)
+        for key in confidenceScores.keys where key >= 100 {
+            confidenceScores.removeValue(forKey: key)
+        }
 
         let prompt = """
         Someone received this message: "\(scenario.message)"
@@ -221,6 +240,12 @@ struct ReplyVariationsView: View {
                 aiVariations = response.suggestions
                 if !response.longerAlternative.isEmpty {
                     aiVariations.append(response.longerAlternative)
+                }
+                // Score AI variations and record analytics
+                for (idx, text) in aiVariations.enumerated() {
+                    let score = ConfidenceScorer.score(text)
+                    confidenceScores[idx + 100] = score
+                    ConfidenceAnalyticsStore.shared.record(score: score)
                 }
             } catch {
                 generateError = error.localizedDescription

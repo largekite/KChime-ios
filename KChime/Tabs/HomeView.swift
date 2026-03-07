@@ -46,6 +46,7 @@ struct HomeView: View {
     @State private var generateError: String? = nil
     @State private var copiedIndex: Int? = nil
     @State private var recentPrompts: [String] = []
+    @State private var confidenceScores: [Int: ConfidenceScore] = [:]  // index → score
     @FocusState private var inputFocused: Bool
 
     // Voice input
@@ -216,31 +217,38 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(suggestions.enumerated()), id: \.offset) { idx, text in
-                    Button(action: { copy(text, index: idx) }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: copiedIndex == idx ? "checkmark.circle.fill" : "doc.on.doc")
-                                .foregroundStyle(copiedIndex == idx ? .green : .indigo)
-                                .font(.body)
-                                .frame(width: 24)
-                                .animation(.spring(response: 0.3), value: copiedIndex)
-                            VStack(alignment: .leading, spacing: 2) {
-                                if idx < toneLabels.count {
-                                    Text(toneLabels[idx])
-                                        .font(.caption2.bold())
-                                        .foregroundStyle(.indigo)
+                    VStack(spacing: 0) {
+                        Button(action: { copy(text, index: idx) }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: copiedIndex == idx ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .foregroundStyle(copiedIndex == idx ? .green : .indigo)
+                                    .font(.body)
+                                    .frame(width: 24)
+                                    .animation(.spring(response: 0.3), value: copiedIndex)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    if idx < toneLabels.count {
+                                        Text(toneLabels[idx])
+                                            .font(.caption2.bold())
+                                            .foregroundStyle(.indigo)
+                                    }
+                                    Text(text)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                Text(text)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
+
+                        if let score = confidenceScores[idx] {
+                            ConfidenceBadge(score: score)
+                                .padding(.bottom, 4)
+                        }
                     }
-                    .buttonStyle(.plain)
                     if idx < suggestions.count - 1 {
                         Divider().padding(.leading, 52)
                     }
@@ -248,29 +256,36 @@ struct HomeView: View {
 
                 if let longer = longerAlternative {
                     Divider().padding(.leading, 52)
-                    Button(action: { copy(longer, index: 99) }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: copiedIndex == 99 ? "checkmark.circle.fill" : "doc.on.doc")
-                                .foregroundStyle(copiedIndex == 99 ? .green : .indigo)
-                                .font(.body)
-                                .frame(width: 24)
-                                .animation(.spring(response: 0.3), value: copiedIndex)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Detailed")
-                                    .font(.caption2.bold())
-                                    .foregroundStyle(.indigo)
-                                Text(longer)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(spacing: 0) {
+                        Button(action: { copy(longer, index: 99) }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: copiedIndex == 99 ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .foregroundStyle(copiedIndex == 99 ? .green : .indigo)
+                                    .font(.body)
+                                    .frame(width: 24)
+                                    .animation(.spring(response: 0.3), value: copiedIndex)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Detailed")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.indigo)
+                                    Text(longer)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
+
+                        if let score = confidenceScores[99] {
+                            ConfidenceBadge(score: score)
+                                .padding(.bottom, 4)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .background(Color(.tertiarySystemBackground))
@@ -392,6 +407,7 @@ struct HomeView: View {
         suggestions = []
         longerAlternative = nil
         copiedIndex = nil
+        confidenceScores = [:]
 
         // Store in recents (max 5)
         recentPrompts.removeAll { $0 == msg }
@@ -411,6 +427,18 @@ struct HomeView: View {
                 longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
                 remaining = response.remaining
                 limit = response.limit
+
+                // Compute confidence scores for each suggestion
+                for (idx, text) in response.suggestions.enumerated() {
+                    let score = ConfidenceScorer.score(text)
+                    confidenceScores[idx] = score
+                    ConfidenceAnalyticsStore.shared.record(score: score)
+                }
+                if let longer = longerAlternative {
+                    let score = ConfidenceScorer.score(longer)
+                    confidenceScores[99] = score
+                    ConfidenceAnalyticsStore.shared.record(score: score)
+                }
                 UsageCache.shared.setUsage(remaining: response.remaining, limit: response.limit,
                                            for: AppConstants.Feature.keyboard)
             } catch {

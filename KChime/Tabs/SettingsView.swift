@@ -72,6 +72,22 @@ struct SettingsView: View {
                     }
                 }
 
+                // Analytics
+                Section("Analytics") {
+                    NavigationLink(destination: ConfidenceDashboardView()) {
+                        HStack {
+                            Label("Confidence Score", systemImage: "chart.bar.fill")
+                                .foregroundStyle(.teal)
+                            Spacer()
+                            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
+                                Text("\(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                                    .font(.caption.bold().monospacedDigit())
+                                    .foregroundStyle(.teal)
+                            }
+                        }
+                    }
+                }
+
                 // Privacy
                 Section("Privacy") {
                     NavigationLink("Privacy Policy") {
