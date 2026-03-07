@@ -122,6 +122,11 @@ struct LiveListenView: View {
                 commitCurrentDraft()
             }
         }
+        .onDisappear {
+            silenceTimer?.invalidate()
+            silenceTimer = nil
+            speechRecognizer.stopListening()
+        }
     }
 
     // MARK: - Bottom Bar

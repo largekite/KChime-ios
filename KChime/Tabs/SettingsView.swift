@@ -1,5 +1,4 @@
 import SwiftUI
-import StoreKit
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -13,19 +12,16 @@ struct SettingsView: View {
                 Section("Plan") {
                     if appState.isPro {
                         HStack {
-                            Label("Pro — Unlimited replies", systemImage: "star.fill")
+                            Label("Pro — 50 replies/day", systemImage: "star.fill")
                                 .foregroundStyle(.indigo)
                             Spacer()
-                            Button("Manage") { openSubscriptionManagement() }
+                            Link("Manage", destination: URL(string: "https://kchime.com/account")!)
                                 .font(.subheadline)
                         }
                     } else {
                         NavigationLink(destination: PaywallView()) {
                             Label("Upgrade to Pro", systemImage: "star")
                                 .foregroundStyle(.indigo)
-                        }
-                        Button("Restore Purchases") {
-                            Task { try? await appState.restorePurchases() }
                         }
                     }
                 }
@@ -107,13 +103,6 @@ struct SettingsView: View {
             } message: {
                 Text(deleteError ?? "")
             }
-        }
-    }
-
-    private func openSubscriptionManagement() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-        Task {
-            try? await AppStore.showManageSubscriptions(in: windowScene)
         }
     }
 

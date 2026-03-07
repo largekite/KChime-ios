@@ -24,9 +24,6 @@ packages:
   KeychainSwift:
     url: https://github.com/evgenyneu/keychain-swift
     from: 20.0.0
-  RevenueCat:
-    url: https://github.com/RevenueCat/purchases-ios
-    from: 5.0.0
 
 targets:
   # ─── Main App ────────────────────────────────────────────────────────────────
@@ -47,8 +44,6 @@ targets:
         APP_GROUP_ID: group.com.kchime.shared
     dependencies:
       - package: KeychainSwift
-      - package: RevenueCat
-        product: RevenueCat
       - sdk: Speech.framework
 
   # ─── Keyboard Extension ──────────────────────────────────────────────────────

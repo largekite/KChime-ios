@@ -146,7 +146,7 @@ generateRepliesRouter.post("/", optionalAuth, async (c) => {
   if (usage.remaining <= 0) {
     return c.json(
       {
-        error: "Daily limit reached. Upgrade to Pro for unlimited replies.",
+        error: "Daily limit reached. Upgrade to Pro for 50 replies/day.",
         code: "LIMIT_REACHED",
         remaining: 0,
         limit: usage.limit,

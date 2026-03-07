@@ -51,6 +51,8 @@ final class SignInWithAppleService: NSObject, ObservableObject {
                          withAccess: .accessibleWhenUnlockedThisDeviceOnly)
             keychain.set(credential.user, forKey: AppConstants.KeychainKey.appleUserID,
                          withAccess: .accessibleWhenUnlockedThisDeviceOnly)
+            // Sync Pro status from the server — this is the single source of truth.
+            EntitlementStore.shared.sync(isPro: response.isPro, expiresAt: nil)
             isSignedIn = true
         } catch {
             errorMessage = error.localizedDescription

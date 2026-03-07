@@ -249,7 +249,7 @@ final class KeyboardViewModel: ObservableObject {
         do {
             let response = try await KChimeAPIClient.shared.generateReplies(request: request)
             suggestions        = response.suggestions
-            longerAlternative  = response.longerAlternative
+            longerAlternative  = response.longerAlternative.isEmpty ? nil : response.longerAlternative
             remaining          = response.remaining
             limit              = response.limit
             UsageCache.shared.setUsage(remaining: response.remaining,

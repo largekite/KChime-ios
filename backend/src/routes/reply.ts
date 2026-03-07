@@ -39,6 +39,7 @@ const replySchema = z.object({
   relationshipProfile: relationshipProfileSchema.optional(),
   contactNotes: z.string().max(500).optional(),
   deviceID: z.string().min(1),
+  contextMode: z.enum(["office", "text", "party", "family"]).optional(),
 });
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
@@ -88,6 +89,18 @@ replyRouter.post("/", optionalAuth, async (c) => {
     );
   }
 
+  // Map contextMode to a custom instruction appended to toneProfile
+  const contextInstruction: Record<string, string> = {
+    office: "The context is a professional workplace setting — keep it workplace-appropriate.",
+    text: "The context is a casual text message conversation — keep it conversational and brief.",
+    party: "The context is a social/party setting — keep it fun and upbeat.",
+    family: "The context is a family conversation — keep it warm and personal.",
+  };
+  const contextNote = body.contextMode ? contextInstruction[body.contextMode] : undefined;
+  const mergedCustomInstructions = [body.toneProfile.customInstructions, contextNote]
+    .filter(Boolean)
+    .join(" ") || undefined;
+
   // Generate
   let result: { suggestions: string[]; longerAlternative: string };
   try {
@@ -99,9 +112,7 @@ replyRouter.post("/", optionalAuth, async (c) => {
         formality: body.toneProfile.formality,
         emojiEnabled: body.toneProfile.emojiEnabled,
         lengthPreference: body.toneProfile.lengthPreference,
-        ...(body.toneProfile.customInstructions !== undefined
-          ? { customInstructions: body.toneProfile.customInstructions }
-          : {}),
+        ...(mergedCustomInstructions !== undefined ? { customInstructions: mergedCustomInstructions } : {}),
       },
       ...(body.relationshipProfile ? { relationshipProfile: body.relationshipProfile } : {}),
       ...(body.contactNotes !== undefined ? { contactNotes: body.contactNotes } : {}),

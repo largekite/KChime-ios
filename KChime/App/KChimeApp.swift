@@ -3,25 +3,29 @@ import SwiftUI
 @main
 struct KChimeApp: App {
     @StateObject private var appState = AppState()
-    @ObservedObject private var rcService = RevenueCatService.shared
     private let persistence = PersistenceController.shared
-
-    init() {
-        RevenueCatService.configure()
-    }
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
-                .environmentObject(rcService)
                 .environment(\.managedObjectContext, persistence.container.viewContext)
                 .onOpenURL { url in handleDeepLink(url) }
         }
     }
 
     private func handleDeepLink(_ url: URL) {
-        // kchime://settings, kchime://saved — full routing in a later iteration
+        guard url.scheme == "kchime" else { return }
+        switch url.host {
+        case "paywall", "upgrade":
+            appState.deepLinkShowPaywall = true
+        case "settings":
+            appState.deepLinkTab = 4
+        case "saved":
+            appState.deepLinkTab = 4   // Settings tab hosts Saved Replies nav
+        default:
+            break
+        }
     }
 }
 

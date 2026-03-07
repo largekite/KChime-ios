@@ -104,8 +104,8 @@ export async function deleteUser(userID: string): Promise<void> {
 
 // ─── Usage Queries ────────────────────────────────────────────────────────────
 
-const FREE_LIMIT = 5;
-const PRO_LIMIT = 10_000;
+const FREE_LIMIT = 10;
+const PRO_LIMIT = 50;
 
 export async function getUsage(params: {
   userID?: string;

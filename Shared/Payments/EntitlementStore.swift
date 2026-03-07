@@ -1,7 +1,7 @@
 import Foundation
 
 /// App Group UserDefaults bridge for entitlement state.
-/// Main app writes after every RevenueCat check; keyboard extension reads offline-first.
+/// Main app writes after sign-in (sourced from backend DB); keyboard extension reads offline-first.
 public final class EntitlementStore: @unchecked Sendable {
     public static let shared = EntitlementStore()
 

@@ -1,6 +1,5 @@
 import SwiftUI
 import KeychainSwift
-import RevenueCat
 
 @MainActor
 final class AppState: ObservableObject {
@@ -9,8 +8,11 @@ final class AppState: ObservableObject {
     @Published var isPro: Bool
     @Published var toneProfile: ToneProfile
 
+    // Deep-link routing state (set by KChimeApp, consumed by MainTabView)
+    @Published var deepLinkShowPaywall = false
+    @Published var deepLinkTab: Int? = nil
+
     private let defaults: UserDefaults
-    private let keychain = KeychainSwift()
 
     init() {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
@@ -24,13 +26,6 @@ final class AppState: ObservableObject {
             self.toneProfile = profile
         } else {
             self.toneProfile = .defaultProfile
-        }
-
-        // Mirror RevenueCatService's isPro into this object whenever it changes
-        Task {
-            for await pro in RevenueCatService.shared.$isPro.values {
-                self.isPro = pro
-            }
         }
     }
 
@@ -62,25 +57,10 @@ final class AppState: ObservableObject {
             defaultID.flatMap { id in all.first(where: { $0.id == id }) }
     }
 
-    // MARK: - Subscription (delegates to RevenueCatService)
+    // MARK: - Subscription
 
-    func purchasePro(package: Package) async throws {
-        try await RevenueCatService.shared.purchase(package: package)
-    }
-
-    func restorePurchases() async throws {
-        try await RevenueCatService.shared.restorePurchases()
-    }
-
-    enum StoreError: Error, LocalizedError {
-        case productNotFound
-        case verificationFailed
-
-        var errorDescription: String? {
-            switch self {
-            case .productNotFound: return "Pro subscription not available. Try again later."
-            case .verificationFailed: return "Purchase could not be verified. Contact support."
-            }
-        }
+    /// Called after sign-in to reflect the server's Pro status in the UI.
+    func refreshProStatus() {
+        isPro = EntitlementStore.shared.isPro
     }
 }

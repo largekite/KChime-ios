@@ -169,6 +169,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
 
     public struct AuthResponse: Decodable {
         public let token: String
+        public let isPro: Bool
         public let isNewUser: Bool
     }
 
@@ -234,7 +235,7 @@ public enum KChimeError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .unauthenticated: return "Sign in to use KChime."
-        case .limitReached: return "Daily limit reached. Upgrade to Pro for unlimited replies."
+        case .limitReached: return "Daily limit reached. Upgrade to Pro for 50 replies/day."
         case .unknown(let msg): return msg
         }
     }

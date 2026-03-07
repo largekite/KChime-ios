@@ -273,7 +273,7 @@ struct KeyboardView: View {
                 Link(destination: url) {
                     HStack {
                         Image(systemName: "star.fill")
-                        Text("Upgrade to Pro — Unlimited replies")
+                        Text("Upgrade to Pro — 50 replies/day")
                     }
                     .font(.caption.bold())
                     .foregroundStyle(.white)

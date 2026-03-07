@@ -341,7 +341,7 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Label("Unlimited replies", systemImage: "infinity")
+                Label("50 replies/day", systemImage: "checkmark.circle.fill")
                     .font(.subheadline)
                     .foregroundStyle(.green)
             }
@@ -410,6 +410,9 @@ struct HomeView: View {
                 suggestions = response.suggestions
                 longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
                 remaining = response.remaining
+                limit = response.limit
+                UsageCache.shared.setUsage(remaining: response.remaining, limit: response.limit,
+                                           for: AppConstants.Feature.keyboard)
             } catch {
                 generateError = error.localizedDescription
             }

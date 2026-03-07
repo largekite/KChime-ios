@@ -28,22 +28,7 @@ public enum AppConstants {
         public static let keyboard = "keyboard"
         public static let shareExtension = "share-extension"
         public static let freeLimit  = 10          // generations / day on free plan
-        public static let proLimit   = 10_000      // effectively unlimited; used as the daily ceiling
-    }
-
-    public enum StoreKit {
-        public static let proMonthlyProductID = "com.kchime.app.pro.monthly"
-        public static let proAnnualProductID  = "com.kchime.app.pro.annual"
-        /// RevenueCat entitlement identifier configured in the RC dashboard.
-        public static let proEntitlementID    = "pro"
-    }
-
-    /// RevenueCat public API key — replace with your project's key from
-    /// https://app.revenuecat.com → Project Settings → API Keys.
-    public enum RevenueCat {
-        public static let publicKey = "appl_REPLACE_WITH_YOUR_KEY"
-        /// RC Offering identifier (set in dashboard; "default" is fine).
-        public static let offeringID = "default"
+        public static let proLimit   = 50          // generations / day on pro plan ($7/mo)
     }
 
 }
