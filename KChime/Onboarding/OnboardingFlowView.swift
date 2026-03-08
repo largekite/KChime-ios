@@ -523,7 +523,7 @@ private struct KeyboardSetupStep: View {
     var body: some View {
         KeyboardSetupView(onComplete: { enabled = true })
             .onAppear { OnboardingAnalytics.track(.keyboardSetupStarted) }
-            .onChange(of: enabled) { if $0 { OnboardingAnalytics.track(.keyboardEnabled) } }
+            .onChange(of: enabled) { _, newValue in if newValue { OnboardingAnalytics.track(.keyboardEnabled) } }
     }
 }
 
