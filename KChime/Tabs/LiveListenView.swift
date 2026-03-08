@@ -138,7 +138,7 @@ struct LiveListenView: View {
                 Button(action: commitCurrentDraft) {
                     Label("Save phrase", systemImage: "checkmark.circle.fill")
                         .font(.subheadline.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
                 .buttonStyle(.plain)
                 .transition(.scale.combined(with: .opacity))
@@ -159,7 +159,7 @@ struct LiveListenView: View {
             Button(action: toggleListening) {
                 ZStack {
                     Circle()
-                        .fill(speechRecognizer.isListening ? Color.red : Color.indigo)
+                        .fill(speechRecognizer.isListening ? Color.red : Color.teal)
                         .frame(width: 64, height: 64)
                     Image(systemName: speechRecognizer.isListening ? "stop.fill" : "mic.fill")
                         .font(.title2)
@@ -236,7 +236,7 @@ private struct TranscriptEntryView: View {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "waveform")
                     .font(.caption)
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
                     .padding(.top, 2)
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -276,7 +276,7 @@ private struct TranscriptEntryView: View {
                 Button(action: onExplain) {
                     Label("Explain & suggest reply", systemImage: "lightbulb")
                         .font(.caption.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 28)

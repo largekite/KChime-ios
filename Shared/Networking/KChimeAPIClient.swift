@@ -73,7 +73,7 @@ public struct ToneProfilePayload: Encodable {
     }
 }
 
-public struct ReplyResponse: Decodable {
+public struct ReplyResponse: Decodable, Sendable {
     public let suggestions: [String]
     public let longerAlternative: String
     public let remaining: Int
@@ -167,7 +167,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
 
     // MARK: - Sign in with Apple
 
-    public struct AuthResponse: Decodable {
+    public struct AuthResponse: Decodable, Sendable {
         public let token: String
         public let isPro: Bool
         public let isMax: Bool

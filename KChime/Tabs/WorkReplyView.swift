@@ -120,7 +120,7 @@ struct WorkReplyView: View {
         HStack(spacing: 12) {
             Image(systemName: "briefcase.fill")
                 .font(.title3)
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Workplace Communication")
                     .font(.subheadline.bold())
@@ -165,7 +165,7 @@ struct WorkReplyView: View {
             if let preset = selectedPreset {
                 Label(preset.title, systemImage: "text.cursor")
                     .font(.headline)
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
             }
 
             ZStack(alignment: .topLeading) {
@@ -201,7 +201,7 @@ struct WorkReplyView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(canGenerate ? Color.indigo : Color.indigo.opacity(0.4))
+                .background(canGenerate ? Color.teal : Color.teal.opacity(0.4))
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
@@ -227,7 +227,7 @@ struct WorkReplyView: View {
                 Button(action: generate) {
                     Label("Regenerate", systemImage: "arrow.clockwise")
                         .font(.caption.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
                 .buttonStyle(.plain)
                 .disabled(isGenerating)
@@ -293,7 +293,7 @@ struct WorkReplyView: View {
     private func buildVariations(from response: ReplyResponse) -> [WorkVariation] {
         let variationDefs: [(String, String, Color, String)] = [
             ("Safe / Neutral",  "Safe",   .green,  "Low"),
-            ("Direct",          "Direct", .indigo, "Medium"),
+            ("Direct",          "Direct", .teal, "Medium"),
             ("Bold",            "Bold",   .orange, "High"),
         ]
         var result: [WorkVariation] = []
@@ -326,7 +326,7 @@ private struct PresetCell: View {
                     .font(.title2)
                 Text(preset.title)
                     .font(.caption.bold())
-                    .foregroundStyle(isSelected ? .indigo : .primary)
+                    .foregroundStyle(isSelected ? .teal : .primary)
                 Text(preset.description)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
@@ -334,11 +334,11 @@ private struct PresetCell: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isSelected ? Color.indigo.opacity(0.1) : Color(.secondarySystemBackground))
+            .background(isSelected ? Color.teal.opacity(0.1) : Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.indigo : Color.clear, lineWidth: 1.5)
+                    .stroke(isSelected ? Color.teal : Color.clear, lineWidth: 1.5)
             )
         }
         .buttonStyle(.plain)
@@ -376,7 +376,7 @@ private struct WorkVariationCard: View {
                 Button(action: copy) {
                     Image(systemName: copiedIndex == index ? "checkmark.circle.fill" : "doc.on.doc")
                         .font(.caption)
-                        .foregroundStyle(copiedIndex == index ? .green : .indigo)
+                        .foregroundStyle(copiedIndex == index ? .green : .teal)
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 8)

@@ -98,16 +98,16 @@ struct PracticeView: View {
             VStack(spacing: 4) {
                 ZStack {
                     Circle()
-                        .stroke(Color.indigo.opacity(0.2), lineWidth: 4)
+                        .stroke(Color.teal.opacity(0.2), lineWidth: 4)
                         .frame(width: 52, height: 52)
                     Circle()
                         .trim(from: 0, to: CGFloat(todayProgress) / CGFloat(dailyGoal))
-                        .stroke(Color.indigo, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(Color.teal, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                         .frame(width: 52, height: 52)
                         .rotationEffect(.degrees(-90))
                     Text("\(todayProgress)/\(dailyGoal)")
                         .font(.caption.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
                 Text("Today")
                     .font(.caption2)
@@ -141,7 +141,7 @@ struct PracticeView: View {
                 .font(.caption.bold())
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(selected ? Color.indigo : Color(.secondarySystemBackground))
+                .background(selected ? Color.teal : Color(.secondarySystemBackground))
                 .foregroundStyle(selected ? .white : .primary)
                 .clipShape(Capsule())
         }
@@ -284,7 +284,7 @@ struct PracticeSessionView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Label(scenario.category.rawValue, systemImage: "bubble.left.fill")
                             .font(.caption.bold())
-                            .foregroundStyle(.indigo)
+                            .foregroundStyle(.teal)
 
                         Text(scenario.message)
                             .font(.body)
@@ -317,7 +317,7 @@ struct PracticeSessionView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(Color.indigo)
+                            .background(Color.teal)
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
@@ -333,7 +333,7 @@ struct PracticeSessionView: View {
                                     Button(action: { copyAndComplete(text: text, index: idx) }) {
                                         HStack(spacing: 12) {
                                             Image(systemName: copiedIndex == idx ? "checkmark.circle.fill" : "doc.on.doc")
-                                                .foregroundStyle(copiedIndex == idx ? .green : .indigo)
+                                                .foregroundStyle(copiedIndex == idx ? .green : .teal)
                                                 .frame(width: 20)
                                             Text(text)
                                                 .font(.subheadline)
@@ -355,10 +355,10 @@ struct PracticeSessionView: View {
                                     Button(action: { copyAndComplete(text: longer, index: 99) }) {
                                         HStack(spacing: 12) {
                                             Image(systemName: copiedIndex == 99 ? "checkmark.circle.fill" : "doc.on.doc")
-                                                .foregroundStyle(copiedIndex == 99 ? .green : .indigo)
+                                                .foregroundStyle(copiedIndex == 99 ? .green : .teal)
                                                 .frame(width: 20)
                                             VStack(alignment: .leading, spacing: 2) {
-                                                Text("Detailed").font(.caption2.bold()).foregroundStyle(.indigo)
+                                                Text("Detailed").font(.caption2.bold()).foregroundStyle(.teal)
                                                 Text(longer)
                                                     .font(.subheadline)
                                                     .foregroundStyle(.primary)

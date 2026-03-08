@@ -46,6 +46,7 @@ struct HomeView: View {
     @State private var generateError: String? = nil
     @State private var copiedIndex: Int? = nil
     @State private var recentPrompts: [String] = []
+    @State private var confidenceScores: [Int: ConfidenceScore] = [:]  // index → score
     @FocusState private var inputFocused: Bool
 
     // Voice input
@@ -57,14 +58,21 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    usageBanner
+                    // Compact usage + confidence row
+                    topStatsRow
+
                     replyGeneratorCard
+
                     if !suggestions.isEmpty {
                         suggestionsCard
                     } else if !recentPrompts.isEmpty && inputText.isEmpty {
                         recentPromptsCard
                     }
-                    quickStartCard
+
+                    // Feature discovery (shown when idle)
+                    if suggestions.isEmpty {
+                        discoverSection
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
@@ -100,7 +108,7 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Quick Reply", systemImage: "wand.and.stars")
                 .font(.headline)
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
 
             Text("Paste or speak a message to get instant reply suggestions.")
                 .font(.caption)
@@ -115,7 +123,7 @@ struct HomeView: View {
                                 .font(.caption.bold())
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
-                                .background(contextMode == mode ? Color.indigo : Color(.tertiarySystemBackground))
+                                .background(contextMode == mode ? Color.teal : Color(.tertiarySystemBackground))
                                 .foregroundStyle(contextMode == mode ? .white : .primary)
                                 .clipShape(Capsule())
                         }
@@ -143,7 +151,7 @@ struct HomeView: View {
                     Button(action: toggleMic) {
                         Image(systemName: speechRecognizer.isListening ? "mic.fill" : "mic")
                             .font(.body)
-                            .foregroundStyle(speechRecognizer.isListening ? .red : .indigo)
+                            .foregroundStyle(speechRecognizer.isListening ? .red : .teal)
                             .padding(8)
                     }
                     .buttonStyle(.plain)
@@ -180,7 +188,7 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(canGenerate ? Color.indigo : Color.indigo.opacity(0.4))
+                .background(canGenerate ? Color.teal : Color.teal.opacity(0.4))
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .scaleEffect(generateButtonPulse ? 1.06 : 1.0)
@@ -208,7 +216,7 @@ struct HomeView: View {
                 Button(action: generate) {
                     Label("Regenerate", systemImage: "arrow.clockwise")
                         .font(.caption.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
                 .buttonStyle(.plain)
                 .disabled(isGenerating)
@@ -216,31 +224,38 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(suggestions.enumerated()), id: \.offset) { idx, text in
-                    Button(action: { copy(text, index: idx) }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: copiedIndex == idx ? "checkmark.circle.fill" : "doc.on.doc")
-                                .foregroundStyle(copiedIndex == idx ? .green : .indigo)
-                                .font(.body)
-                                .frame(width: 24)
-                                .animation(.spring(response: 0.3), value: copiedIndex)
-                            VStack(alignment: .leading, spacing: 2) {
-                                if idx < toneLabels.count {
-                                    Text(toneLabels[idx])
-                                        .font(.caption2.bold())
-                                        .foregroundStyle(.indigo)
+                    VStack(spacing: 0) {
+                        Button(action: { copy(text, index: idx) }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: copiedIndex == idx ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .foregroundStyle(copiedIndex == idx ? .green : .teal)
+                                    .font(.body)
+                                    .frame(width: 24)
+                                    .animation(.spring(response: 0.3), value: copiedIndex)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    if idx < toneLabels.count {
+                                        Text(toneLabels[idx])
+                                            .font(.caption2.bold())
+                                            .foregroundStyle(.teal)
+                                    }
+                                    Text(text)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                Text(text)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
+
+                        if let score = confidenceScores[idx] {
+                            ConfidenceBadge(score: score)
+                                .padding(.bottom, 4)
+                        }
                     }
-                    .buttonStyle(.plain)
                     if idx < suggestions.count - 1 {
                         Divider().padding(.leading, 52)
                     }
@@ -248,29 +263,36 @@ struct HomeView: View {
 
                 if let longer = longerAlternative {
                     Divider().padding(.leading, 52)
-                    Button(action: { copy(longer, index: 99) }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: copiedIndex == 99 ? "checkmark.circle.fill" : "doc.on.doc")
-                                .foregroundStyle(copiedIndex == 99 ? .green : .indigo)
-                                .font(.body)
-                                .frame(width: 24)
-                                .animation(.spring(response: 0.3), value: copiedIndex)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Detailed")
-                                    .font(.caption2.bold())
-                                    .foregroundStyle(.indigo)
-                                Text(longer)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(spacing: 0) {
+                        Button(action: { copy(longer, index: 99) }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: copiedIndex == 99 ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .foregroundStyle(copiedIndex == 99 ? .green : .teal)
+                                    .font(.body)
+                                    .frame(width: 24)
+                                    .animation(.spring(response: 0.3), value: copiedIndex)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Detailed")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.teal)
+                                    Text(longer)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
+
+                        if let score = confidenceScores[99] {
+                            ConfidenceBadge(score: score)
+                                .padding(.bottom, 4)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .background(Color(.tertiarySystemBackground))
@@ -314,62 +336,113 @@ struct HomeView: View {
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
-    // MARK: - Usage Banner
+    // MARK: - Top Stats Row
 
-    private var usageBanner: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(appState.isPro ? "Pro Plan" : "Free Plan")
-                    .font(.headline)
-                Spacer()
-                if !appState.isPro {
-                    NavigationLink("Upgrade") {
-                        PaywallView()
+    private var topStatsRow: some View {
+        HStack(spacing: 12) {
+            // Usage pill
+            HStack(spacing: 8) {
+                Image(systemName: "bolt.fill")
+                    .font(.caption)
+                    .foregroundStyle(.teal)
+                if appState.isPro {
+                    Text("Pro")
+                        .font(.caption.bold())
+                        .foregroundStyle(.teal)
+                } else {
+                    Text("\(remaining)/\(limit)")
+                        .font(.caption.bold().monospacedDigit())
+                    ProgressView(value: Double(limit - remaining), total: Double(limit))
+                        .tint(remaining > 1 ? .teal : .orange)
+                        .frame(width: 40)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color(.secondarySystemBackground))
+            .clipShape(Capsule())
+
+            Spacer()
+
+            // Confidence score pill
+            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
+                NavigationLink(destination: ConfidenceDashboardView()) {
+                    HStack(spacing: 6) {
+                        ScoreRing(
+                            score: ConfidenceAnalyticsStore.shared.todayAverageScore,
+                            color: .teal,
+                            size: 22
+                        )
+                        Text("Avg \(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundStyle(.teal)
                     }
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.indigo)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(Capsule())
                 }
             }
 
             if !appState.isPro {
-                VStack(alignment: .leading, spacing: 6) {
-                    ProgressView(value: Double(limit - remaining), total: Double(limit))
-                        .tint(remaining > 1 ? .indigo : .orange)
-
-                    Text("\(remaining) of \(limit) replies remaining today")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                NavigationLink(destination: PaywallView()) {
+                    Text("Upgrade")
+                        .font(.caption.bold())
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.teal)
+                        .clipShape(Capsule())
                 }
-            } else {
-                Label("50 replies/day", systemImage: "checkmark.circle.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(.green)
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
-    // MARK: - Quick Start Card
+    // MARK: - Discover Section
 
-    private var quickStartCard: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "keyboard.fill")
-                .font(.title3)
-                .foregroundStyle(.indigo)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Also works in any app")
-                    .font(.subheadline.bold())
-                Text("Enable the KChime keyboard in Settings to reply without leaving your messaging app.")
+    private var discoverSection: some View {
+        VStack(spacing: 12) {
+            Text("Explore")
+                .font(.caption.bold())
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 12) {
+                NavigationLink(destination: ReplyPacksView()) {
+                    DiscoverCard(
+                        icon: "tray.full.fill",
+                        title: "Reply Packs",
+                        subtitle: "Browse scenarios",
+                        color: .teal
+                    )
+                }
+                .buttonStyle(.plain)
+
+                NavigationLink(destination: ConfidenceDashboardView()) {
+                    DiscoverCard(
+                        icon: "chart.bar.fill",
+                        title: "Confidence",
+                        subtitle: "Your score stats",
+                        color: .green
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+
+            // Keyboard tip (compact)
+            HStack(spacing: 10) {
+                Image(systemName: "keyboard.fill")
                     .font(.caption)
+                    .foregroundStyle(.teal)
+                Text("Enable the KChime keyboard in Settings to reply from any app.")
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
             }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.tertiarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
     // MARK: - Actions
@@ -392,6 +465,7 @@ struct HomeView: View {
         suggestions = []
         longerAlternative = nil
         copiedIndex = nil
+        confidenceScores = [:]
 
         // Store in recents (max 5)
         recentPrompts.removeAll { $0 == msg }
@@ -411,6 +485,18 @@ struct HomeView: View {
                 longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
                 remaining = response.remaining
                 limit = response.limit
+
+                // Compute confidence scores for each suggestion
+                for (idx, text) in response.suggestions.enumerated() {
+                    let score = ConfidenceScorer.score(text)
+                    confidenceScores[idx] = score
+                    ConfidenceAnalyticsStore.shared.record(score: score)
+                }
+                if let longer = longerAlternative {
+                    let score = ConfidenceScorer.score(longer)
+                    confidenceScores[99] = score
+                    ConfidenceAnalyticsStore.shared.record(score: score)
+                }
                 UsageCache.shared.setUsage(remaining: response.remaining, limit: response.limit,
                                            for: AppConstants.Feature.keyboard)
             } catch {
@@ -444,5 +530,32 @@ struct HomeView: View {
             limit = result.limit
             UsageCache.shared.setUsage(remaining: result.remaining, limit: result.limit, for: AppConstants.Feature.keyboard)
         }
+    }
+}
+
+// MARK: - Discover Card
+
+private struct DiscoverCard: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(color)
+            Text(title)
+                .font(.caption.bold())
+                .foregroundStyle(.primary)
+            Text(subtitle)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

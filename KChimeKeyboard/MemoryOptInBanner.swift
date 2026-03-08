@@ -11,7 +11,7 @@ struct MemoryOptInBanner: View {
             HStack(spacing: 10) {
                 Image(systemName: "brain")
                     .font(.caption)
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
 
                 Text("Remember context for next time?")
                     .font(.caption)
@@ -25,7 +25,7 @@ struct MemoryOptInBanner: View {
                     onYes()
                 }
                 .font(.caption.bold())
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
 
                 Button("No") { isVisible = false }
                     .font(.caption)
@@ -33,7 +33,7 @@ struct MemoryOptInBanner: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(Color.indigo.opacity(0.08))
+            .background(Color.teal.opacity(0.08))
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }

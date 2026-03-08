@@ -64,11 +64,11 @@ struct ContactRow: View {
         HStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.indigo.opacity(0.15))
+                    .fill(Color.teal.opacity(0.15))
                     .frame(width: 40, height: 40)
                 Text(String(contact.displayName?.prefix(1) ?? "?"))
                     .font(.headline)
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(contact.displayName ?? "Unknown")

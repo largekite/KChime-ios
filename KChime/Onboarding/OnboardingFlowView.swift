@@ -157,7 +157,7 @@ private struct OnboardingShell<Content: View>: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule().fill(Color(.systemFill)).frame(height: 4)
-                            Capsule().fill(Color.indigo)
+                            Capsule().fill(Color.teal)
                                 .frame(width: geo.size.width * fraction, height: 4)
                                 .animation(.spring(response: 0.5), value: fraction)
                         }
@@ -192,7 +192,7 @@ private struct OnboardingShell<Content: View>: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.indigo)
+                    .background(Color.teal)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }
@@ -229,11 +229,11 @@ struct ValuePropView: View {
                 // Logo mark
                 ZStack {
                     Circle()
-                        .fill(Color.indigo.opacity(0.1))
+                        .fill(Color.teal.opacity(0.1))
                         .frame(width: 100, height: 100)
                     Image(systemName: "bubble.left.and.bubble.right.fill")
                         .font(.system(size: 42))
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
 
                 // Hero copy
@@ -256,7 +256,7 @@ struct ValuePropView: View {
                         HStack(alignment: .top, spacing: 14) {
                             Image(systemName: item.icon)
                                 .font(.body.weight(.semibold))
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                                 .frame(width: 22, alignment: .top)
                                 .padding(.top, 1)
                             VStack(alignment: .leading, spacing: 2) {
@@ -285,7 +285,7 @@ struct ValuePropView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.indigo)
+                        .background(Color.teal)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
@@ -377,7 +377,7 @@ private struct ToneOptionCard: View {
             HStack(alignment: .top, spacing: 16) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? Color.indigo : Color(.tertiarySystemGroupedBackground))
+                        .fill(isSelected ? Color.teal : Color(.tertiarySystemGroupedBackground))
                         .frame(width: 44, height: 44)
                     Image(systemName: option.icon)
                         .font(.body.weight(.semibold))
@@ -391,7 +391,7 @@ private struct ToneOptionCard: View {
                         Spacer()
                         if isSelected {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                                 .transition(.scale.combined(with: .opacity))
                         }
                     }
@@ -412,7 +412,7 @@ private struct ToneOptionCard: View {
                     .fill(Color(.secondarySystemBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(isSelected ? Color.indigo : Color.clear, lineWidth: 2)
+                            .stroke(isSelected ? Color.teal : Color.clear, lineWidth: 2)
                     )
             )
         }
@@ -478,7 +478,7 @@ private struct ContactChipCard: View {
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.body)
-                            .foregroundStyle(.indigo)
+                            .foregroundStyle(.teal)
                             .offset(x: 4, y: -4)
                             .transition(.scale.combined(with: .opacity))
                     }
@@ -496,10 +496,10 @@ private struct ContactChipCard: View {
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isSelected ? Color.indigo.opacity(0.08) : Color(.secondarySystemBackground))
+                    .fill(isSelected ? Color.teal.opacity(0.08) : Color(.secondarySystemBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(isSelected ? Color.indigo : Color.clear, lineWidth: 2)
+                            .stroke(isSelected ? Color.teal : Color.clear, lineWidth: 2)
                     )
             )
         }
@@ -523,7 +523,7 @@ private struct KeyboardSetupStep: View {
     var body: some View {
         KeyboardSetupView(onComplete: { enabled = true })
             .onAppear { OnboardingAnalytics.track(.keyboardSetupStarted) }
-            .onChange(of: enabled) { if $0 { OnboardingAnalytics.track(.keyboardEnabled) } }
+            .onChange(of: enabled) { _, newValue in if newValue { OnboardingAnalytics.track(.keyboardEnabled) } }
     }
 }
 
@@ -564,7 +564,7 @@ struct FirstSuccessView: View {
             .padding(.bottom, 4)
 
             // Progress bar at 100%
-            Capsule().fill(Color.indigo).frame(height: 4)
+            Capsule().fill(Color.teal).frame(height: 4)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
 
@@ -588,7 +588,7 @@ struct FirstSuccessView: View {
                             HStack(spacing: 8) {
                                 ZStack {
                                     Circle()
-                                        .fill(Color.indigo.opacity(0.15))
+                                        .fill(Color.teal.opacity(0.15))
                                         .frame(width: 32, height: 32)
                                     Text("👔").font(.body)
                                 }
@@ -642,7 +642,7 @@ struct FirstSuccessView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.indigo)
+                        .background(Color.teal)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
@@ -667,16 +667,16 @@ struct FirstSuccessView: View {
     private var generateButton: some View {
         Button(action: runGeneration) {
             HStack(spacing: 10) {
-                Image(systemName: "sparkles").foregroundStyle(.indigo)
-                Text("Generate my replies").font(.headline).foregroundStyle(.indigo)
+                Image(systemName: "sparkles").foregroundStyle(.teal)
+                Text("Generate my replies").font(.headline).foregroundStyle(.teal)
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.indigo.opacity(0.08))
+            .background(Color.teal.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.indigo.opacity(0.3), lineWidth: 1.5)
+                    .stroke(Color.teal.opacity(0.3), lineWidth: 1.5)
             )
         }
         .padding(.horizontal, 20)
@@ -815,7 +815,7 @@ struct OnboardingDoneView: View {
             Button(action: onFinish) {
                 Text("Start Replying").font(.headline)
                     .frame(maxWidth: .infinity).padding()
-                    .background(.indigo).foregroundStyle(.white)
+                    .background(.teal).foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }
             .padding(.horizontal, 24).padding(.bottom, 48)

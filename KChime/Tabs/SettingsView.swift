@@ -13,7 +13,7 @@ struct SettingsView: View {
                     if appState.isMax {
                         HStack {
                             Label("Max — Unlimited replies", systemImage: "star.fill")
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                             Spacer()
                             Link("Manage", destination: URL(string: "https://kchime.com/account")!)
                                 .font(.subheadline)
@@ -21,7 +21,7 @@ struct SettingsView: View {
                     } else if appState.isPro {
                         HStack {
                             Label("Pro — 50 replies/day", systemImage: "star.fill")
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                             Spacer()
                             Link("Manage", destination: URL(string: "https://kchime.com/account")!)
                                 .font(.subheadline)
@@ -29,7 +29,7 @@ struct SettingsView: View {
                     } else {
                         NavigationLink(destination: PaywallView()) {
                             Label("Upgrade to Pro", systemImage: "star")
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(.teal)
                         }
                     }
                 }
@@ -69,6 +69,22 @@ struct SettingsView: View {
                     }
                     NavigationLink(destination: PromisesListView()) {
                         Label("Promises", systemImage: "bell.badge.fill")
+                    }
+                }
+
+                // Analytics
+                Section("Analytics") {
+                    NavigationLink(destination: ConfidenceDashboardView()) {
+                        HStack {
+                            Label("Confidence Score", systemImage: "chart.bar.fill")
+                                .foregroundStyle(.teal)
+                            Spacer()
+                            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
+                                Text("\(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                                    .font(.caption.bold().monospacedDigit())
+                                    .foregroundStyle(.teal)
+                            }
+                        }
                     }
                 }
 

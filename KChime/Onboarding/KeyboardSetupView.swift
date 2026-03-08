@@ -15,7 +15,7 @@ struct KeyboardSetupView: View {
             VStack(spacing: 28) {
                 Image(systemName: "keyboard.fill")
                     .font(.system(size: 56))
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.teal)
 
                 VStack(spacing: 8) {
                     Text("Enable the Keyboard")
@@ -52,7 +52,7 @@ struct KeyboardSetupView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(.indigo)
+                        .background(.teal)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
@@ -94,8 +94,10 @@ struct KeyboardSetupView: View {
     }
 
     private func startPolling() {
-        checkTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { _ in
-            detectKeyboardState()
+        checkTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { [self] _ in
+            Task { @MainActor in
+                detectKeyboardState()
+            }
         }
     }
 
@@ -106,7 +108,7 @@ struct KeyboardSetupView: View {
 
     private func detectKeyboardState() {
         let modes = UITextInputMode.activeInputModes
-        let bundleID = Bundle.main.bundleIdentifier ?? ""
+        let _ = Bundle.main.bundleIdentifier ?? ""
         // Keyboard extension bundle ID is mainApp.keyboard
         keyboardEnabled = modes.contains { $0.primaryLanguage?.contains("KChime") ?? false }
             || modes.map(\.description).contains { $0.lowercased().contains("kchime") }
@@ -138,7 +140,7 @@ struct SetupStep: View {
         HStack(alignment: .top, spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(isComplete ? Color.green : Color.indigo)
+                    .fill(isComplete ? Color.green : Color.teal)
                     .frame(width: 32, height: 32)
                 if isComplete {
                     Image(systemName: "checkmark")

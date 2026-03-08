@@ -91,7 +91,7 @@ struct ToneSettingsView: View {
                     Spacer()
                     Text(formalityLabel(draft.formality))
                         .font(.caption.bold())
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                     Spacer()
                     Text("Formal")
                         .font(.caption)
@@ -109,7 +109,7 @@ struct ToneSettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .tint(.indigo)
+                .tint(.teal)
             }
             .padding(.vertical, 4)
         } header: {
@@ -146,7 +146,7 @@ struct ToneSettingsView: View {
             Toggle(isOn: $draft.emojiEnabled) {
                 Label("Allow emoji in replies", systemImage: "face.smiling.inverse")
             }
-            .tint(.indigo)
+            .tint(.teal)
         } footer: {
             Text(draft.emojiEnabled
                  ? "KChime may include 1–2 relevant emojis per reply."
@@ -193,7 +193,7 @@ struct ToneSettingsView: View {
             if previewText.isEmpty && !isGeneratingPreview {
                 Button(action: generatePreview) {
                     Label("Preview a reply with these settings", systemImage: "eye")
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(.teal)
                 }
             } else if isGeneratingPreview {
                 HStack {
@@ -212,7 +212,7 @@ struct ToneSettingsView: View {
                         Spacer()
                         Button("Refresh", action: generatePreview)
                             .font(.caption)
-                            .foregroundStyle(.indigo)
+                            .foregroundStyle(.teal)
                     }
 
                     Text(previewText)
@@ -240,7 +240,7 @@ struct ToneSettingsView: View {
     private var profileBadge: some View {
         HStack {
             Image(systemName: "wand.and.stars")
-                .foregroundStyle(.indigo)
+                .foregroundStyle(.teal)
             Text(draft.label)
                 .font(.subheadline.bold())
         }
@@ -314,11 +314,11 @@ private struct PresetCard: View {
             .frame(width: 110, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color.indigo : Color(.tertiarySystemGroupedBackground))
+                    .fill(isSelected ? Color.teal : Color(.tertiarySystemGroupedBackground))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.indigo : Color(.separator), lineWidth: isSelected ? 2 : 0.5)
+                    .stroke(isSelected ? Color.teal : Color(.separator), lineWidth: isSelected ? 2 : 0.5)
             )
         }
         .buttonStyle(.plain)
@@ -330,7 +330,7 @@ private struct PresetCard: View {
             ForEach(0..<4, id: \.self) { i in
                 Circle()
                     .fill(i < filled
-                          ? (isSelected ? Color.white.opacity(0.8) : Color.indigo)
+                          ? (isSelected ? Color.white.opacity(0.8) : Color.teal)
                           : (isSelected ? Color.white.opacity(0.3) : Color(.systemFill)))
                     .frame(width: 4, height: 4)
             }
