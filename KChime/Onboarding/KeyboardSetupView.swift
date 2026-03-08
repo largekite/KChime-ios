@@ -94,7 +94,7 @@ struct KeyboardSetupView: View {
     }
 
     private func startPolling() {
-        checkTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { _ in
+        checkTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { @MainActor _ in
             detectKeyboardState()
         }
     }
