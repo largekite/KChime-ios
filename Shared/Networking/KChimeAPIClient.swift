@@ -167,7 +167,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
 
     // MARK: - Sign in with Apple
 
-    public struct AuthResponse: Decodable {
+    public struct AuthResponse: Decodable, Sendable {
         public let token: String
         public let isPro: Bool
         public let isMax: Bool
