@@ -1,4 +1,4 @@
-import UserNotifications
+@preconcurrency import UserNotifications
 import Foundation
 
 // MARK: - Scheduler

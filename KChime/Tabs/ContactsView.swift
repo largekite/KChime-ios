@@ -1,5 +1,5 @@
 import SwiftUI
-import CoreData
+@preconcurrency import CoreData
 
 struct ContactsView: View {
     @Environment(\.managedObjectContext) private var context

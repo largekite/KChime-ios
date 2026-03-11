@@ -1,5 +1,5 @@
 import SwiftUI
-import Speech
+@preconcurrency import Speech
 
 // MARK: - Transcript Entry
 

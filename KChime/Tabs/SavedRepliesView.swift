@@ -1,5 +1,5 @@
 import SwiftUI
-import CoreData
+@preconcurrency import CoreData
 
 struct SavedRepliesView: View {
     @Environment(\.managedObjectContext) private var context

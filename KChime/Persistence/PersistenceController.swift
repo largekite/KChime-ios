@@ -1,4 +1,4 @@
-import CoreData
+@preconcurrency import CoreData
 
 final class PersistenceController {
     nonisolated(unsafe) static let shared = PersistenceController()
