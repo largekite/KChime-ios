@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import type { AIProvider, GenerateParams } from "./index.js";
+import type { AIProvider, GenerateParams, RawPromptParams } from "./index.js";
 import type { GenerateResult } from "./prompt-builder.js";
 import { buildPrompt, parseGenerateResult } from "./prompt-builder.js";
 
@@ -33,5 +33,19 @@ export class OpenAIProvider implements AIProvider {
       result.tokensUsed = response.usage.total_tokens;
     }
     return result;
+  }
+
+  async generateRaw(params: RawPromptParams): Promise<string> {
+    const response = await this.client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: params.system },
+        { role: "user", content: params.user },
+      ],
+      max_tokens: 1024,
+      temperature: 0.8,
+      response_format: { type: "json_object" },
+    });
+    return response.choices[0]?.message.content ?? "{}";
   }
 }

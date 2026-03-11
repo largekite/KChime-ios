@@ -82,8 +82,6 @@ public struct ConsoleAnalyticsAdapter: AnalyticsAdapter, Sendable {
 /// Sends events to the KChime backend telemetry endpoint.
 /// Use this in the keyboard extension (which can't run PostHog/Segment SDKs).
 public struct BackendTelemetryAdapter: AnalyticsAdapter, Sendable {
-    private nonisolated(unsafe) static let iso8601 = ISO8601DateFormatter()
-
     private let baseURL: String
     private let deviceID: String
 
@@ -92,11 +90,16 @@ public struct BackendTelemetryAdapter: AnalyticsAdapter, Sendable {
         self.deviceID = deviceID
     }
 
+    private static func iso8601String(from date: Date) -> String {
+        let fmt = ISO8601DateFormatter()
+        return fmt.string(from: date)
+    }
+
     public func track(name: String, properties: [String: Any]) {
         var body: [String: Any] = [
             "event": name,
             "device_id": deviceID,
-            "ts": Self.iso8601.string(from: Date()),
+            "ts": Self.iso8601String(from: Date()),
         ]
         if !properties.isEmpty { body["properties"] = properties }
 

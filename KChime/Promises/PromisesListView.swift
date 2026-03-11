@@ -190,7 +190,7 @@ private struct EditPromiseSheet: View {
                         onSave(updated)
                         dismiss()
                     }
-                    .disabled(reminderDate <= Date())
+                    .disabled(reminderDate < Date().addingTimeInterval(-60))
                 }
             }
         }
@@ -227,6 +227,7 @@ private final class PromisesViewModel: ObservableObject {
 
     func delete(from section: [KChimePromise], at offsets: IndexSet) {
         for index in offsets {
+            guard index < section.count else { continue }
             let promise = section[index]
             PromiseStore.shared.delete(id: promise.id)
             PromiseNotificationScheduler.cancel(notificationID: promise.notificationID)

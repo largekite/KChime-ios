@@ -64,7 +64,7 @@ final class ConfidenceAnalyticsStore: ObservableObject {
 
     var weekEntries: [DayEntry] {
         let calendar = Calendar.current
-        let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: Date())!
+        guard let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: Date()) else { return [] }
         let cutoff = Self.dayKey(for: sevenDaysAgo)
         return entries.filter { $0.dayKey >= cutoff }.sorted { $0.dayKey < $1.dayKey }
     }
@@ -114,8 +114,8 @@ final class ConfidenceAnalyticsStore: ObservableObject {
 
     private func lastWeekAverage(_ keyPath: KeyPath<DayEntry, Int>) -> Int {
         let calendar = Calendar.current
-        let fourteenDaysAgo = calendar.date(byAdding: .day, value: -13, to: Date())!
-        let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
+        guard let fourteenDaysAgo = calendar.date(byAdding: .day, value: -13, to: Date()),
+              let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: Date()) else { return 0 }
         let start = Self.dayKey(for: fourteenDaysAgo)
         let end = Self.dayKey(for: sevenDaysAgo)
         let w = entries.filter { $0.dayKey >= start && $0.dayKey < end }
@@ -127,7 +127,7 @@ final class ConfidenceAnalyticsStore: ObservableObject {
     private static func dayKey(for date: Date = Date()) -> String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = .current
+        f.timeZone = TimeZone(identifier: "UTC")
         return f.string(from: date)
     }
 
@@ -167,6 +167,7 @@ struct DayEntry: Codable, Identifiable {
     var displayDate: String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
+        f.timeZone = TimeZone(identifier: "UTC")
         guard let date = f.date(from: dayKey) else { return dayKey }
         let display = DateFormatter()
         display.dateFormat = "EEE"

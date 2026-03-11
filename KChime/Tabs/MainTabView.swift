@@ -5,28 +5,32 @@ struct MainTabView: View {
     @State private var selectedTab = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
+        ZStack {
+            TabView(selection: $selectedTab) {
+                HomeView()
+                    .tabItem { Label("Reply", systemImage: "bubble.left.and.bubble.right.fill") }
+                    .tag(0)
 
-            ReplyPacksView()
-                .tabItem { Label("Packs", systemImage: "tray.full.fill") }
-                .tag(1)
+                FixMessageView()
+                    .tabItem { Label("Fix", systemImage: "wand.and.stars") }
+                    .tag(1)
 
-            PracticeView()
-                .tabItem { Label("Practice", systemImage: "graduationcap.fill") }
-                .tag(2)
+                PracticeView()
+                    .tabItem { Label("Practice", systemImage: "graduationcap.fill") }
+                    .tag(2)
 
-            LiveListenView()
-                .tabItem { Label("Live", systemImage: "waveform.circle.fill") }
-                .tag(3)
+                ReplyPacksView()
+                    .tabItem { Label("Packs", systemImage: "tray.full.fill") }
+                    .tag(3)
 
-            SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(4)
+                SettingsView()
+                    .tabItem { Label("Settings", systemImage: "gearshape.fill") }
+                    .tag(4)
+            }
+            .tint(.teal)
+
+            ToastOverlay()
         }
-        .tint(.teal)
         .sheet(isPresented: $appState.deepLinkShowPaywall) {
             PaywallView()
         }

@@ -39,10 +39,21 @@ public final class EntitlementStore: @unchecked Sendable {
         return Date(timeIntervalSince1970: interval)
     }
 
+    public func dailyLimit(for featureKey: String) -> Int {
+        let pro = isPro || isMax
+        switch featureKey {
+        case AppConstants.Feature.workReply:
+            return pro ? AppConstants.Feature.workProLimit : AppConstants.Feature.workFreeLimit
+        case AppConstants.Feature.fixMessage:
+            return pro ? AppConstants.Feature.fixProLimit : AppConstants.Feature.fixFreeLimit
+        default:
+            return pro ? AppConstants.Feature.proLimit : AppConstants.Feature.freeLimit
+        }
+    }
+
+    /// Convenience for backward compatibility (keyboard default).
     public var dailyLimit: Int {
-        if isMax { return AppConstants.Feature.maxLimit }
-        if isPro { return AppConstants.Feature.proLimit }
-        return AppConstants.Feature.freeLimit
+        dailyLimit(for: AppConstants.Feature.keyboard)
     }
 
     // MARK: - Write (main app only)

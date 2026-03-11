@@ -3,32 +3,40 @@ import SwiftUI
 // MARK: - Reply Packs View
 
 struct ReplyPacksView: View {
-    @State private var selectedPack: ReplyPack? = nil
+    var embedded = false
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    introCard
+        if embedded {
+            content
+        } else {
+            NavigationStack {
+                content
+            }
+        }
+    }
 
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
-                        ForEach(ReplyPacks.all) { pack in
-                            NavigationLink(value: pack) {
-                                PackCard(pack: pack)
-                            }
-                            .buttonStyle(.plain)
+    private var content: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                introCard
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+                    ForEach(ReplyPacks.all) { pack in
+                        NavigationLink(value: pack) {
+                            PackCard(pack: pack)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 32)
             }
-            .navigationTitle("Reply Packs")
-            .navigationBarTitleDisplayMode(.large)
-            .navigationDestination(for: ReplyPack.self) { pack in
-                ReplyPackDetailView(pack: pack)
-            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 32)
+        }
+        .navigationTitle("Reply Packs")
+        .navigationBarTitleDisplayMode(.large)
+        .navigationDestination(for: ReplyPack.self) { pack in
+            ReplyPackDetailView(pack: pack)
         }
     }
 
@@ -62,7 +70,7 @@ private struct PackCard: View {
     private var accentColor: Color {
         switch pack.color {
         case "orange": return .orange
-        case "indigo": return .teal
+        case "indigo": return .indigo
         case "green":  return .green
         case "red":    return .red
         case "teal":   return .teal

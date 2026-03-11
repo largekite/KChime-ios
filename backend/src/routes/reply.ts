@@ -89,12 +89,12 @@ replyRouter.post("/", optionalAuth, async (c) => {
     );
   }
 
-  // Map contextMode to a custom instruction appended to toneProfile
+  // Map contextMode to context-specific instructions with tone labels
   const contextInstruction: Record<string, string> = {
-    office: "The context is a professional workplace setting — keep it workplace-appropriate.",
-    text: "The context is a casual text message conversation — keep it conversational and brief.",
-    party: "The context is a social/party setting — keep it fun and upbeat.",
-    family: "The context is a family conversation — keep it warm and personal.",
+    office: "The context is a professional workplace setting — keep it workplace-appropriate. Generate 4 replies with these tones: Professional, Diplomatic, Confident, Friendly.",
+    text: "The context is a casual text message conversation — keep it conversational and brief. Generate 4 replies with these tones: Chill, Witty, Hype, Sweet.",
+    party: "The context is a social/party setting — keep it fun and upbeat. Generate 4 replies with these tones: Playful, Bold, Energetic, Smooth.",
+    family: "The context is a family conversation — keep it warm and personal. Generate 4 replies with these tones: Warm, Gentle, Lighthearted, Respectful.",
   };
   const contextNote = body.contextMode ? contextInstruction[body.contextMode] : undefined;
   const mergedCustomInstructions = [body.toneProfile.customInstructions, contextNote]

@@ -41,7 +41,7 @@ enum ReplyPacks {
         color: "orange",
         scenarios: [
             ReplyScenario(
-                id: "af-1",
+                id: "awk-1",
                 message: "Sorry I just saw this",
                 context: "You took way too long to reply and need a smooth recovery.",
                 seedReplies: [
@@ -51,7 +51,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-2",
+                id: "awk-2",
                 message: "Just checking in",
                 context: "Someone's following up because you haven't responded yet.",
                 seedReplies: [
@@ -61,7 +61,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-3",
+                id: "awk-3",
                 message: "Following up",
                 context: "A more formal follow-up that needs a professional response.",
                 seedReplies: [
@@ -71,7 +71,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-4",
+                id: "awk-4",
                 message: "My bad, I forgot",
                 context: "Someone admits they forgot something — you need to respond gracefully.",
                 seedReplies: [
@@ -81,7 +81,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-5",
+                id: "awk-5",
                 message: "Did you get my last message?",
                 context: "They're wondering if you're ignoring them.",
                 seedReplies: [
@@ -91,7 +91,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-6",
+                id: "awk-6",
                 message: "That came out wrong, sorry",
                 context: "Someone said something awkward and is trying to fix it.",
                 seedReplies: [
@@ -101,7 +101,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-7",
+                id: "awk-7",
                 message: "Wrong person, ignore that lol",
                 context: "They sent a message meant for someone else.",
                 seedReplies: [
@@ -111,7 +111,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-8",
+                id: "awk-8",
                 message: "I didn't mean to leave you on read",
                 context: "They realized they left you on read and feel bad.",
                 seedReplies: [
@@ -121,7 +121,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-9",
+                id: "awk-9",
                 message: "Are you mad at me?",
                 context: "Someone thinks you're upset due to slow or short replies.",
                 seedReplies: [
@@ -131,7 +131,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-10",
+                id: "awk-10",
                 message: "Sorry for the double text",
                 context: "They feel awkward about sending multiple messages.",
                 seedReplies: [
@@ -141,7 +141,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-11",
+                id: "awk-11",
                 message: "I hope this isn't weird to ask…",
                 context: "Someone's about to ask something they think might be awkward.",
                 seedReplies: [
@@ -151,7 +151,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-12",
+                id: "awk-12",
                 message: "Can we pretend I didn't say that?",
                 context: "They regret something they just said.",
                 seedReplies: [
@@ -161,7 +161,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-13",
+                id: "awk-13",
                 message: "I accidentally liked your old photo",
                 context: "The classic social media deep-scroll embarrassment.",
                 seedReplies: [
@@ -171,7 +171,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-14",
+                id: "awk-14",
                 message: "Was that sarcastic? I can't tell over text",
                 context: "Your tone didn't come through in the message.",
                 seedReplies: [
@@ -181,7 +181,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-15",
+                id: "awk-15",
                 message: "I know this is last minute, but…",
                 context: "Someone's asking a favor with very little notice.",
                 seedReplies: [
@@ -191,7 +191,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-16",
+                id: "awk-16",
                 message: "I feel like I'm bothering you",
                 context: "Someone thinks they're being a nuisance.",
                 seedReplies: [
@@ -201,7 +201,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-17",
+                id: "awk-17",
                 message: "K",
                 context: "Someone sent the dreaded single-letter reply.",
                 seedReplies: [
@@ -211,7 +211,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-18",
+                id: "awk-18",
                 message: "We need to talk",
                 context: "The most anxiety-inducing text ever sent.",
                 seedReplies: [
@@ -221,7 +221,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-19",
+                id: "awk-19",
                 message: "No offense, but…",
                 context: "Someone's about to say something potentially offensive.",
                 seedReplies: [
@@ -231,7 +231,7 @@ enum ReplyPacks {
                 ]
             ),
             ReplyScenario(
-                id: "af-20",
+                id: "awk-20",
                 message: "Haha",
                 context: "A dry reply that's hard to continue the conversation from.",
                 seedReplies: [

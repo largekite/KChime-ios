@@ -25,17 +25,50 @@ enum ContextMode: String, CaseIterable {
     }
 }
 
-// MARK: - Tone Label
+// MARK: - Context-Specific Tones
 
-private let toneLabels = ["Casual", "Warm", "Funny"]
+private func contextToneLabels(for mode: ContextMode) -> [String] {
+    switch mode {
+    case .any:    return ["Casual", "Warm", "Funny", "Safe"]
+    case .office: return ["Professional", "Diplomatic", "Confident", "Friendly"]
+    case .text:   return ["Chill", "Witty", "Hype", "Sweet"]
+    case .party:  return ["Playful", "Bold", "Energetic", "Smooth"]
+    case .family: return ["Warm", "Gentle", "Lighthearted", "Respectful"]
+    }
+}
+
+private func toneColor(for tone: String) -> Color {
+    switch tone {
+    case "Casual":       return .indigo
+    case "Warm":         return .pink
+    case "Funny":        return .yellow
+    case "Safe":         return .green
+    case "Professional": return .gray
+    case "Diplomatic":   return .cyan
+    case "Confident":    return .purple
+    case "Friendly":     return .teal
+    case "Chill":        return .cyan
+    case "Witty":        return .orange
+    case "Hype":         return .red
+    case "Sweet":        return .pink
+    case "Playful":      return .yellow
+    case "Bold":         return .red
+    case "Energetic":    return .green
+    case "Smooth":       return .purple
+    case "Gentle":       return .blue
+    case "Lighthearted": return .yellow
+    case "Respectful":   return .green
+    default:             return .teal
+    }
+}
 
 // MARK: - HomeView
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
+    @ObservedObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var remaining = AppConstants.Feature.freeLimit
     @State private var limit = AppConstants.Feature.freeLimit
-    @State private var isLoadingUsage = false
 
     // Reply generator
     @State private var inputText = ""
@@ -51,8 +84,6 @@ struct HomeView: View {
 
     // Voice input
     @StateObject private var speechRecognizer = SpeechRecognizer(continuous: false)
-    @State private var micError: String? = nil
-    @State private var generateButtonPulse = false
 
     var body: some View {
         NavigationStack {
@@ -63,7 +94,9 @@ struct HomeView: View {
 
                     replyGeneratorCard
 
-                    if !suggestions.isEmpty {
+                    if isGenerating {
+                        SuggestionsSkeletonCard()
+                    } else if !suggestions.isEmpty {
                         suggestionsCard
                     } else if !recentPrompts.isEmpty && inputText.isEmpty {
                         recentPromptsCard
@@ -89,15 +122,8 @@ struct HomeView: View {
         }
         .onChange(of: speechRecognizer.isListening) { _, isListening in
             if !isListening && !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
-                    generateButtonPulse = true
-                }
-                Task {
-                    try? await Task.sleep(for: .milliseconds(350))
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                        generateButtonPulse = false
-                    }
-                }
+                // Auto-submit after speech ends (matching web behavior)
+                generate()
             }
         }
     }
@@ -171,7 +197,7 @@ struct HomeView: View {
                     .foregroundStyle(.red)
             }
 
-            if let err = micError ?? speechRecognizer.errorMessage ?? generateError {
+            if let err = speechRecognizer.errorMessage ?? generateError {
                 Text(err)
                     .font(.caption)
                     .foregroundStyle(.red)
@@ -191,7 +217,6 @@ struct HomeView: View {
                 .background(canGenerate ? Color.teal : Color.teal.opacity(0.4))
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                .scaleEffect(generateButtonPulse ? 1.06 : 1.0)
             }
             .disabled(!canGenerate)
         }
@@ -233,10 +258,15 @@ struct HomeView: View {
                                     .frame(width: 24)
                                     .animation(.spring(response: 0.3), value: copiedIndex)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    if idx < toneLabels.count {
-                                        Text(toneLabels[idx])
+                                    let tones = contextToneLabels(for: contextMode)
+                                    if idx < tones.count {
+                                        Text(tones[idx])
                                             .font(.caption2.bold())
-                                            .foregroundStyle(.teal)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 1)
+                                            .background(toneColor(for: tones[idx]).opacity(0.12))
+                                            .foregroundStyle(toneColor(for: tones[idx]))
+                                            .clipShape(Capsule())
                                     }
                                     Text(text)
                                         .font(.subheadline)
@@ -352,7 +382,7 @@ struct HomeView: View {
                 } else {
                     Text("\(remaining)/\(limit)")
                         .font(.caption.bold().monospacedDigit())
-                    ProgressView(value: Double(limit - remaining), total: Double(limit))
+                    ProgressView(value: Double(max(0, limit - remaining)), total: Double(max(1, limit)))
                         .tint(remaining > 1 ? .teal : .orange)
                         .frame(width: 40)
                 }
@@ -365,15 +395,15 @@ struct HomeView: View {
             Spacer()
 
             // Confidence score pill
-            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
+            if confidenceStore.todayAverageScore > 0 {
                 NavigationLink(destination: ConfidenceDashboardView()) {
                     HStack(spacing: 6) {
                         ScoreRing(
-                            score: ConfidenceAnalyticsStore.shared.todayAverageScore,
+                            score: confidenceStore.todayAverageScore,
                             color: .teal,
                             size: 22
                         )
-                        Text("Avg \(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                        Text("Avg \(confidenceStore.todayAverageScore)")
                             .font(.caption.bold().monospacedDigit())
                             .foregroundStyle(.teal)
                     }
@@ -408,7 +438,7 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 12) {
-                NavigationLink(destination: ReplyPacksView()) {
+                NavigationLink(destination: ReplyPacksView(embedded: true)) {
                     DiscoverCard(
                         icon: "tray.full.fill",
                         title: "Reply Packs",
@@ -509,6 +539,7 @@ struct HomeView: View {
     private func copy(_ text: String, index: Int) {
         UIPasteboard.general.string = text
         copiedIndex = index
+        ToastManager.shared.show("Copied to clipboard")
         Task {
             try? await Task.sleep(for: .seconds(2))
             copiedIndex = nil
@@ -523,12 +554,14 @@ struct HomeView: View {
             limit = cached.limit
             return
         }
-        isLoadingUsage = true
-        defer { isLoadingUsage = false }
         if let result = try? await KChimeAPIClient.shared.fetchUsage(featureKey: AppConstants.Feature.keyboard) {
             remaining = result.remaining
             limit = result.limit
             UsageCache.shared.setUsage(remaining: result.remaining, limit: result.limit, for: AppConstants.Feature.keyboard)
+        } else if appState.isPro {
+            let proLimit = EntitlementStore.shared.dailyLimit(for: AppConstants.Feature.keyboard)
+            remaining = proLimit
+            limit = proLimit
         }
     }
 }

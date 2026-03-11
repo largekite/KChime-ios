@@ -276,7 +276,7 @@ struct WorkReplyView: View {
         Task {
             do {
                 let request = ReplyRequest(
-                    featureKey: AppConstants.Feature.keyboard,
+                    featureKey: AppConstants.Feature.workReply,
                     receivedMessage: prompt,
                     toneProfile: appState.toneProfile.toPayload(),
                     contextMode: "office"
@@ -299,12 +299,12 @@ struct WorkReplyView: View {
         var result: [WorkVariation] = []
         let allTexts = response.suggestions + (response.longerAlternative.isEmpty ? [] : [response.longerAlternative])
         for (idx, def) in variationDefs.enumerated() {
-            let text = idx < allTexts.count ? allTexts[idx] : ""
+            guard idx < allTexts.count, !allTexts[idx].isEmpty else { continue }
             result.append(WorkVariation(
                 title: def.0,
                 toneLabel: def.1,
                 toneColor: def.2,
-                text: text,
+                text: allTexts[idx],
                 riskLevel: def.3
             ))
         }
@@ -402,6 +402,7 @@ private struct WorkVariationCard: View {
     private func copy() {
         UIPasteboard.general.string = variation.text
         copiedIndex = index
+        ToastManager.shared.show("Copied to clipboard")
         Task {
             try? await Task.sleep(for: .seconds(2))
             copiedIndex = nil

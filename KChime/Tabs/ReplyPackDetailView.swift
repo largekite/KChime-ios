@@ -3,6 +3,7 @@ import SwiftUI
 // MARK: - Reply Pack Detail View
 
 struct ReplyPackDetailView: View {
+    @EnvironmentObject var appState: AppState
     let pack: ReplyPack
     @State private var searchText = ""
     @State private var selectedScenario: ReplyScenario? = nil
@@ -19,7 +20,7 @@ struct ReplyPackDetailView: View {
     private var accentColor: Color {
         switch pack.color {
         case "orange": return .orange
-        case "indigo": return .teal
+        case "indigo": return .indigo
         case "green":  return .green
         case "red":    return .red
         case "teal":   return .teal
@@ -66,6 +67,7 @@ struct ReplyPackDetailView: View {
         .searchable(text: $searchText, prompt: "Search messages…")
         .sheet(item: $selectedScenario) { scenario in
             ReplyVariationsView(scenario: scenario, accentColor: accentColor)
+                .environmentObject(appState)
         }
     }
 }

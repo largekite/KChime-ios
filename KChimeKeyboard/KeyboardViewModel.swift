@@ -162,7 +162,6 @@ final class KeyboardViewModel: ObservableObject {
     func insertSuggestion(_ text: String, at index: Int) {
         textProxy?.insertText(text)
         insertedIndex = index
-        UsageCache.shared.decrementLocally(for: AppConstants.Feature.keyboard)
 
         // Run promise detection on the inserted text.
         let promise = PromiseDetector.detect(in: text)
@@ -217,7 +216,7 @@ final class KeyboardViewModel: ObservableObject {
     }
 
     func saveSuggestion(_ text: String) {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
+        let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         var pending = defaults.stringArray(forKey: "kchime_pending_saves") ?? []
         pending.append(text)
         defaults.set(pending, forKey: "kchime_pending_saves")

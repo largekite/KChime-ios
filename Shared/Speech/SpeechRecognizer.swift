@@ -14,6 +14,8 @@ public final class SpeechRecognizer: ObservableObject {
     private nonisolated(unsafe) var audioEngine = AVAudioEngine()
     private nonisolated(unsafe) var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
+    /// Accumulated transcript segments from previous recognition sessions (continuous mode).
+    private var accumulatedTranscript: String = ""
 
     private let recognizer: SFSpeechRecognizer?
     public let continuous: Bool
@@ -28,6 +30,7 @@ public final class SpeechRecognizer: ObservableObject {
     public func startListening() async {
         errorMessage = nil
         transcript = ""
+        accumulatedTranscript = ""
 
         guard await checkPermissions() else {
             errorMessage = "Enable Microphone and Speech Recognition in Settings → Privacy."
@@ -78,7 +81,7 @@ public final class SpeechRecognizer: ObservableObject {
             let format = inputNode.outputFormat(forBus: 0)
 
             // Capture request locally so closure doesn't need @MainActor access
-            let req = recognitionRequest!
+            guard let req = recognitionRequest else { return }
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
                 req.append(buffer)
             }
@@ -97,11 +100,17 @@ public final class SpeechRecognizer: ObservableObject {
                 Task { @MainActor [weak self] in
                     guard let self else { return }
                     if let result {
-                        self.transcript = result.bestTranscription.formattedString
+                        let segment = result.bestTranscription.formattedString
+                        if self.continuous && !self.accumulatedTranscript.isEmpty {
+                            self.transcript = self.accumulatedTranscript + " " + segment
+                        } else {
+                            self.transcript = segment
+                        }
                     }
                     if error != nil || result?.isFinal == true {
                         if self.continuous && self.isListening {
-                            // Restart for next phrase
+                            // Save completed segment before restarting
+                            self.accumulatedTranscript = self.transcript
                             self.stopListening()
                             self.startSession()
                         } else {

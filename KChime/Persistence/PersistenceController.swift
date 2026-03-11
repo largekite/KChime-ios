@@ -8,10 +8,12 @@ final class PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "KChime")
 
-        let groupURL = (FileManager.default
+        guard let baseURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: AppConstants.appGroupID)
-            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!)
-            .appendingPathComponent("KChime.sqlite")
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            fatalError("[PersistenceController] No writable directory available for CoreData store")
+        }
+        let groupURL = baseURL.appendingPathComponent("KChime.sqlite")
 
         let description = inMemory
             ? NSPersistentStoreDescription()
@@ -29,8 +31,8 @@ final class PersistenceController {
         container.persistentStoreDescriptions = [description]
         container.loadPersistentStores { _, error in
             if let error {
-                // In production, report to crash analytics rather than fatalError
-                fatalError("CoreData load failed: \(error)")
+                // Log error but do not crash in production
+                print("[PersistenceController] CoreData load failed: \(error)")
             }
         }
         container.viewContext.automaticallyMergesChangesFromParent = true
@@ -40,13 +42,18 @@ final class PersistenceController {
     // MARK: - Nuke all local data (user-initiated)
 
     func deleteAllData() {
+        let context = container.viewContext
         let entities = container.managedObjectModel.entities
         for entity in entities {
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity.name ?? "")
             let delete = NSBatchDeleteRequest(fetchRequest: request)
-            _ = try? container.viewContext.execute(delete)
+            delete.resultType = .resultTypeObjectIDs
+            if let result = try? context.execute(delete) as? NSBatchDeleteResult,
+               let objectIDs = result.result as? [NSManagedObjectID] {
+                let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+            }
         }
-        try? container.viewContext.save()
     }
 
     // MARK: - Preview helper

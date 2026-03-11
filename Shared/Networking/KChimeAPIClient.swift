@@ -87,6 +87,41 @@ public struct UsageResponse: Decodable {
     public let feature: String
 }
 
+// MARK: - Fix Message Models
+
+public struct FixMessageRequest: Encodable {
+    public let draft: String
+    public let messageType: String
+    public let relationship: String
+    public let toneProfile: ToneProfilePayload
+    public let deviceID: String
+
+    public init(
+        draft: String,
+        messageType: String,
+        relationship: String,
+        toneProfile: ToneProfilePayload
+    ) {
+        self.draft = draft
+        self.messageType = messageType
+        self.relationship = relationship
+        self.toneProfile = toneProfile
+        self.deviceID = KChimeAPIClient.deviceID
+    }
+}
+
+public struct FixMessageResponseItem: Decodable, Sendable {
+    public let tone: String
+    public let text: String
+    public let improvements: [String]
+}
+
+public struct FixMessageResponse: Decodable, Sendable {
+    public let fixes: [FixMessageResponseItem]
+    public let remaining: Int
+    public let limit: Int
+}
+
 public struct APIError: Decodable, Error {
     public let error: String
     public let code: String?
@@ -101,14 +136,25 @@ public final class KChimeAPIClient: @unchecked Sendable {
     private let keychain = KeychainSwift()
 
     // Stable anonymous device ID, created once and persisted
+    private static let deviceIDLock = NSLock()
     public static var deviceID: String {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
-        if let existing = defaults.string(forKey: AppConstants.UserDefaultsKey.anonymousDeviceID) {
-            return existing
+        deviceIDLock.withLock {
+            let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
+            if let existing = defaults.string(forKey: AppConstants.UserDefaultsKey.anonymousDeviceID) {
+                return existing
+            }
+            let new = UUID().uuidString
+            defaults.set(new, forKey: AppConstants.UserDefaultsKey.anonymousDeviceID)
+            return new
         }
-        let new = UUID().uuidString
-        defaults.set(new, forKey: AppConstants.UserDefaultsKey.anonymousDeviceID)
-        return new
+    }
+
+    /// Constructs an API URL from a path. Throws if the base URL is malformed.
+    private func apiURL(_ path: String) throws -> URL {
+        guard let url = URL(string: "\(AppConstants.apiBaseURL)\(path)") else {
+            throw URLError(.badURL)
+        }
+        return url
     }
 
     private init() {
@@ -121,7 +167,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
     // MARK: - Reply Generation
 
     public func generateReplies(request: ReplyRequest) async throws -> ReplyResponse {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/reply")!
+        let url = try apiURL("/api/mobile/reply")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -151,16 +197,63 @@ public final class KChimeAPIClient: @unchecked Sendable {
         }
     }
 
+    // MARK: - Fix Message
+
+    public func fixMessage(request: FixMessageRequest) async throws -> FixMessageResponse {
+        let url = try apiURL("/api/mobile/fix-message")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        if let token = keychain.get(AppConstants.KeychainKey.authToken) {
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        urlRequest.httpBody = try JSONEncoder().encode(request)
+
+        let (data, response) = try await session.data(for: urlRequest)
+
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
+        switch http.statusCode {
+        case 200:
+            return try JSONDecoder().decode(FixMessageResponse.self, from: data)
+        case 401:
+            throw KChimeError.unauthenticated
+        case 429:
+            throw KChimeError.limitReached
+        default:
+            let apiErr = try? JSONDecoder().decode(APIError.self, from: data)
+            throw KChimeError.unknown(apiErr?.error ?? "HTTP \(http.statusCode)")
+        }
+    }
+
     // MARK: - Usage
 
     public func fetchUsage(featureKey: String) async throws -> (remaining: Int, limit: Int) {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/usage?feature=\(featureKey)&deviceID=\(Self.deviceID)")!
+        guard var components = URLComponents(string: "\(AppConstants.apiBaseURL)/api/mobile/usage") else {
+            throw URLError(.badURL)
+        }
+        components.queryItems = [
+            URLQueryItem(name: "feature", value: featureKey),
+            URLQueryItem(name: "deviceID", value: Self.deviceID),
+        ]
+        guard let url = components.url else { throw URLError(.badURL) }
         var urlRequest = URLRequest(url: url)
         if let token = keychain.get(AppConstants.KeychainKey.authToken) {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let (data, _) = try await session.data(for: urlRequest)
+        let (data, response) = try await session.data(for: urlRequest)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard http.statusCode == 200 else {
+            let apiErr = try? JSONDecoder().decode(APIError.self, from: data)
+            throw KChimeError.unknown(apiErr?.error ?? "Usage fetch failed: HTTP \(http.statusCode)")
+        }
         let result = try JSONDecoder().decode(UsageResponse.self, from: data)
         return (result.remaining, result.limit)
     }
@@ -180,7 +273,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
         givenName: String? = nil,
         familyName: String? = nil
     ) async throws -> AuthResponse {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/auth/apple")!
+        let url = try apiURL("/api/auth/apple")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -212,7 +305,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
 
     @discardableResult
     public func deleteAccount() async throws -> Bool {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/account")!
+        let url = try apiURL("/api/mobile/account")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "DELETE"
         if let token = keychain.get(AppConstants.KeychainKey.authToken) {

@@ -11,6 +11,7 @@ import { usageRouter } from "./routes/usage.js";
 import { accountRouter } from "./routes/account.js";
 import { revenuecatWebhookRouter } from "./routes/webhooks/revenuecat.js";
 import { telemetryRouter } from "./routes/telemetry.js";
+import { fixMessageRouter } from "./routes/fix-message.js";
 
 export function createApp(): Hono {
   const app = new Hono();
@@ -40,6 +41,7 @@ export function createApp(): Hono {
   app.route("/api/mobile/account", accountRouter);
   app.route("/api/webhooks/revenuecat", revenuecatWebhookRouter);
   app.route("/api/telemetry/event", telemetryRouter);
+  app.route("/api/mobile/fix-message", fixMessageRouter);
 
   // ─── 404 fallback ────────────────────────────────────────────────────────────
   app.notFound((c) => c.json({ error: "Not found", code: "NOT_FOUND" }, 404));

@@ -107,10 +107,11 @@ extension RelationshipProfile {
 /// Reads and writes the selected (last-used) relationship profile ID via the
 /// shared App Group UserDefaults so both the main app and keyboard extension
 /// stay in sync without a CoreData MOC.
-final class RelationshipProfileStore {
+final class RelationshipProfileStore: @unchecked Sendable {
     nonisolated(unsafe) static let shared = RelationshipProfileStore()
 
     private let defaults: UserDefaults
+    private let lock = NSLock()
     private let selectedIDKey = "kchime_selected_relationship_id"
     private let customProfilesKey = "kchime_custom_relationship_profiles"
 
@@ -123,10 +124,14 @@ final class RelationshipProfileStore {
     /// The last-used profile, or nil for "no relationship context".
     var selectedProfile: RelationshipProfile? {
         get {
+            lock.lock()
+            defer { lock.unlock() }
             guard let id = defaults.string(forKey: selectedIDKey) else { return nil }
-            return allProfiles.first { $0.id == id }
+            return _allProfiles.first { $0.id == id }
         }
         set {
+            lock.lock()
+            defer { lock.unlock() }
             if let profile = newValue {
                 defaults.set(profile.id, forKey: selectedIDKey)
             } else {
@@ -138,7 +143,13 @@ final class RelationshipProfileStore {
     // MARK: - All profiles (built-ins + custom)
 
     var allProfiles: [RelationshipProfile] {
-        RelationshipProfile.builtIns + customProfiles
+        lock.lock()
+        defer { lock.unlock() }
+        return _allProfiles
+    }
+
+    private var _allProfiles: [RelationshipProfile] {
+        RelationshipProfile.builtIns + _customProfiles
     }
 
     /// Convenience accessor used by onboarding views.
@@ -147,6 +158,12 @@ final class RelationshipProfileStore {
     // MARK: - Custom profiles
 
     var customProfiles: [RelationshipProfile] {
+        lock.lock()
+        defer { lock.unlock() }
+        return _customProfiles
+    }
+
+    private var _customProfiles: [RelationshipProfile] {
         guard let data = defaults.data(forKey: customProfilesKey),
               let profiles = try? JSONDecoder().decode([RelationshipProfile].self, from: data)
         else { return [] }
@@ -154,24 +171,28 @@ final class RelationshipProfileStore {
     }
 
     func saveCustomProfile(_ profile: RelationshipProfile) {
-        var custom = customProfiles
+        lock.lock()
+        defer { lock.unlock() }
+        var custom = _customProfiles
         if let idx = custom.firstIndex(where: { $0.id == profile.id }) {
             custom[idx] = profile
         } else {
             custom.append(profile)
         }
-        encode(custom, forKey: customProfilesKey)
+        _encode(custom, forKey: customProfilesKey)
     }
 
     func deleteCustomProfile(id: String) {
-        var custom = customProfiles.filter { $0.id != id }
-        encode(custom, forKey: customProfilesKey)
-        if selectedProfile?.id == id {
-            selectedProfile = nil
+        lock.lock()
+        defer { lock.unlock() }
+        let custom = _customProfiles.filter { $0.id != id }
+        _encode(custom, forKey: customProfilesKey)
+        if defaults.string(forKey: selectedIDKey) == id {
+            defaults.removeObject(forKey: selectedIDKey)
         }
     }
 
-    private func encode(_ value: some Encodable, forKey key: String) {
+    private func _encode(_ value: some Encodable, forKey key: String) {
         if let data = try? JSONEncoder().encode(value) {
             defaults.set(data, forKey: key)
         }

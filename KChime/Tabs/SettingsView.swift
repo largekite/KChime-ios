@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
+    @ObservedObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var showDeleteConfirm = false
     @State private var deleteError: String?
 
@@ -10,15 +11,7 @@ struct SettingsView: View {
             Form {
                 // Subscription
                 Section("Plan") {
-                    if appState.isMax {
-                        HStack {
-                            Label("Max — Unlimited replies", systemImage: "star.fill")
-                                .foregroundStyle(.teal)
-                            Spacer()
-                            Link("Manage", destination: URL(string: "https://kchime.com/account")!)
-                                .font(.subheadline)
-                        }
-                    } else if appState.isPro {
+                    if appState.isPro {
                         HStack {
                             Label("Pro — 50 replies/day", systemImage: "star.fill")
                                 .foregroundStyle(.teal)
@@ -79,8 +72,8 @@ struct SettingsView: View {
                             Label("Confidence Score", systemImage: "chart.bar.fill")
                                 .foregroundStyle(.teal)
                             Spacer()
-                            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
-                                Text("\(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                            if confidenceStore.todayAverageScore > 0 {
+                                Text("\(confidenceStore.todayAverageScore)")
                                     .font(.caption.bold().monospacedDigit())
                                     .foregroundStyle(.teal)
                             }
@@ -130,6 +123,7 @@ struct SettingsView: View {
         }
     }
 
+    @MainActor
     private func deleteAllData() async {
         // 1. Wipe CoreData
         PersistenceController.shared.deleteAllData()
@@ -138,10 +132,25 @@ struct SettingsView: View {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID)
         defaults?.removePersistentDomain(forName: AppConstants.appGroupID)
 
-        // 3. Call server delete
+        // 3. Wipe practice data stored in UserDefaults.standard
+        UserDefaults.standard.removeObject(forKey: "practice_streak")
+        UserDefaults.standard.removeObject(forKey: "practice_completedToday")
+        UserDefaults.standard.removeObject(forKey: "practice_lastDate")
+
+        // 4. Sign out (clears auth token + Apple User ID from Keychain)
+        SignInWithAppleService.shared.signOut()
+
+        // 5. Call server delete
         _ = try? await KChimeAPIClient.shared.deleteAccount()
 
-        // 4. Reset app state
+        // 6. Revoke entitlements
+        EntitlementStore.shared.revoke()
+
+        // 7. Reset all in-memory app state
+        appState.isPro = false
+        appState.isMax = false
+        appState.privacyAccepted = false
+        appState.toneProfile = .defaultProfile
         appState.onboardingComplete = false
     }
 

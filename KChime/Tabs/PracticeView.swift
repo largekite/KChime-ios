@@ -153,13 +153,17 @@ struct PracticeView: View {
     private func refreshDailyState() {
         let today = dateString(Date())
         if lastDateString != today {
-            // New day — reset completions, potentially update streak
-            if let last = Calendar.current.date(from: DateFormatter().calendar.dateComponents([.year, .month, .day], from: Date())),
-               let lastDate = dateFromString(lastDateString) {
-                let diff = Calendar.current.dateComponents([.day], from: lastDate, to: last).day ?? 0
-                if diff == 1 && completedToday.count >= dailyGoal {
+            // New day — check yesterday's progress before resetting
+            let yesterdayCompleted = completedToday.count
+            if let lastDate = dateFromString(lastDateString) {
+                let diff = Calendar.current.dateComponents([.day], from: lastDate, to: Date()).day ?? 0
+                if diff == 1 && yesterdayCompleted >= dailyGoal {
                     streak += 1
+                } else if diff == 1 && yesterdayCompleted < dailyGoal {
+                    // Missed goal yesterday — reset streak
+                    streak = 0
                 } else if diff > 1 {
+                    // Missed one or more days entirely
                     streak = 0
                 }
             }
@@ -306,7 +310,9 @@ struct PracticeSessionView: View {
                     }
 
                     if suggestions.isEmpty {
-                        Button(action: generateReplies) {
+                        Button {
+                            Task { await generateReplies() }
+                        } label: {
                             Group {
                                 if isGenerating {
                                     ProgressView().tint(.white)
@@ -389,35 +395,36 @@ struct PracticeSessionView: View {
                 }
                 if !suggestions.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: generateReplies) {
+                        Button {
+                            Task { await generateReplies() }
+                        } label: {
                             Image(systemName: "arrow.clockwise")
                         }
                         .disabled(isGenerating)
                     }
                 }
             }
-            .task { generateReplies() }
+            .task { await generateReplies() }
         }
     }
 
-    private func generateReplies() {
+    private func generateReplies() async {
+        guard !isGenerating else { return }
         isGenerating = true
         error = nil
-        Task {
-            do {
-                let request = ReplyRequest(
-                    featureKey: AppConstants.Feature.keyboard,
-                    receivedMessage: scenario.message,
-                    toneProfile: appState.toneProfile.toPayload()
-                )
-                let response = try await KChimeAPIClient.shared.generateReplies(request: request)
-                suggestions = response.suggestions
-                longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
-            } catch {
-                self.error = error.localizedDescription
-            }
-            isGenerating = false
+        do {
+            let request = ReplyRequest(
+                featureKey: AppConstants.Feature.keyboard,
+                receivedMessage: scenario.message,
+                toneProfile: appState.toneProfile.toPayload()
+            )
+            let response = try await KChimeAPIClient.shared.generateReplies(request: request)
+            suggestions = response.suggestions
+            longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
+        } catch {
+            self.error = error.localizedDescription
         }
+        isGenerating = false
     }
 
     private func copyAndComplete(text: String, index: Int) {
@@ -434,6 +441,12 @@ struct PracticeSessionView: View {
 
 private struct SeededRandomNumberGenerator: RandomNumberGenerator {
     var seed: UInt64
+
+    init(seed: UInt64) {
+        // Ensure seed is never 0 (xorshift produces all zeros if seeded with 0)
+        self.seed = seed == 0 ? 1 : seed
+    }
+
     mutating func next() -> UInt64 {
         seed ^= seed << 13
         seed ^= seed >> 7

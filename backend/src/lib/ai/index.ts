@@ -19,9 +19,15 @@ export interface GenerateParams {
 
 // ─── Provider interface ───────────────────────────────────────────────────────
 
+export interface RawPromptParams {
+  system: string;
+  user: string;
+}
+
 export interface AIProvider {
   name: string;
   generateReplies(params: GenerateParams): Promise<GenerateResult>;
+  generateRaw(params: RawPromptParams): Promise<string>;
 }
 
 // ─── Providers ────────────────────────────────────────────────────────────────
@@ -57,6 +63,15 @@ export class FallbackAIProvider implements AIProvider {
     } catch (err) {
       console.warn(`[AI] Primary "${this.primary.name}" failed, falling back:`, err);
       return await this.secondary.generateReplies(params);
+    }
+  }
+
+  async generateRaw(params: RawPromptParams): Promise<string> {
+    try {
+      return await this.primary.generateRaw(params);
+    } catch (err) {
+      console.warn(`[AI] Primary "${this.primary.name}" raw failed, falling back:`, err);
+      return await this.secondary.generateRaw(params);
     }
   }
 }
