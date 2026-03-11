@@ -66,7 +66,7 @@ private func toneColor(for tone: String) -> Color {
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var confidenceStore = ConfidenceAnalyticsStore.shared
+    @StateObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var remaining = AppConstants.Feature.freeLimit
     @State private var limit = AppConstants.Feature.freeLimit
 

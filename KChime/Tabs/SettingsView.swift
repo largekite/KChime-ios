@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var confidenceStore = ConfidenceAnalyticsStore.shared
+    @StateObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var showDeleteConfirm = false
     @State private var deleteError: String?
 
