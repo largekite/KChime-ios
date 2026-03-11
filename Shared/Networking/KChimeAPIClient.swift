@@ -233,7 +233,9 @@ public final class KChimeAPIClient: @unchecked Sendable {
     // MARK: - Usage
 
     public func fetchUsage(featureKey: String) async throws -> (remaining: Int, limit: Int) {
-        var components = URLComponents(string: "\(AppConstants.apiBaseURL)/api/mobile/usage")!
+        guard var components = URLComponents(string: "\(AppConstants.apiBaseURL)/api/mobile/usage") else {
+            throw URLError(.badURL)
+        }
         components.queryItems = [
             URLQueryItem(name: "feature", value: featureKey),
             URLQueryItem(name: "deviceID", value: Self.deviceID),

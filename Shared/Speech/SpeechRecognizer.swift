@@ -81,7 +81,7 @@ public final class SpeechRecognizer: ObservableObject {
             let format = inputNode.outputFormat(forBus: 0)
 
             // Capture request locally so closure doesn't need @MainActor access
-            let req = recognitionRequest!
+            guard let req = recognitionRequest else { return }
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
                 req.append(buffer)
             }

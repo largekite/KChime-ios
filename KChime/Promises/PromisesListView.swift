@@ -190,7 +190,7 @@ private struct EditPromiseSheet: View {
                         onSave(updated)
                         dismiss()
                     }
-                    .disabled(reminderDate <= Date())
+                    .disabled(reminderDate < Date().addingTimeInterval(-60))
                 }
             }
         }

@@ -167,6 +167,7 @@ struct DayEntry: Codable, Identifiable {
     var displayDate: String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
+        f.timeZone = TimeZone(identifier: "UTC")
         guard let date = f.date(from: dayKey) else { return dayKey }
         let display = DateFormatter()
         display.dateFormat = "EEE"
