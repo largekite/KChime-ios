@@ -438,7 +438,7 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 12) {
-                NavigationLink(destination: ReplyPacksView()) {
+                NavigationLink(destination: ReplyPacksView(embedded: true)) {
                     DiscoverCard(
                         icon: "tray.full.fill",
                         title: "Reply Packs",

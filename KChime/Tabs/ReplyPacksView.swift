@@ -3,30 +3,40 @@ import SwiftUI
 // MARK: - Reply Packs View
 
 struct ReplyPacksView: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    introCard
+    var embedded = false
 
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
-                        ForEach(ReplyPacks.all) { pack in
-                            NavigationLink(value: pack) {
-                                PackCard(pack: pack)
-                            }
-                            .buttonStyle(.plain)
+    var body: some View {
+        if embedded {
+            content
+        } else {
+            NavigationStack {
+                content
+            }
+        }
+    }
+
+    private var content: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                introCard
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+                    ForEach(ReplyPacks.all) { pack in
+                        NavigationLink(value: pack) {
+                            PackCard(pack: pack)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 32)
             }
-            .navigationTitle("Reply Packs")
-            .navigationBarTitleDisplayMode(.large)
-            .navigationDestination(for: ReplyPack.self) { pack in
-                ReplyPackDetailView(pack: pack)
-            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 32)
+        }
+        .navigationTitle("Reply Packs")
+        .navigationBarTitleDisplayMode(.large)
+        .navigationDestination(for: ReplyPack.self) { pack in
+            ReplyPackDetailView(pack: pack)
         }
     }
 
