@@ -58,7 +58,7 @@ final class ToastManager: ObservableObject {
 // MARK: - Toast Overlay
 
 struct ToastOverlay: View {
-    @ObservedObject var manager = ToastManager.shared
+    @StateObject var manager = ToastManager.shared
 
     var body: some View {
         VStack(spacing: 6) {
