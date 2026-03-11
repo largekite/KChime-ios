@@ -558,6 +558,10 @@ struct HomeView: View {
             remaining = result.remaining
             limit = result.limit
             UsageCache.shared.setUsage(remaining: result.remaining, limit: result.limit, for: AppConstants.Feature.keyboard)
+        } else if appState.isPro {
+            let proLimit = EntitlementStore.shared.dailyLimit(for: AppConstants.Feature.keyboard)
+            remaining = proLimit
+            limit = proLimit
         }
     }
 }

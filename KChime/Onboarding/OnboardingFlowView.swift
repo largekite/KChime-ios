@@ -795,30 +795,3 @@ struct FirstSuccessView: View {
     }
 }
 
-// MARK: - Done (kept as fallback, no longer shown by default)
-
-struct OnboardingDoneView: View {
-    let onFinish: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            VStack(spacing: 20) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 72)).foregroundStyle(.green)
-                Text("You're all set").font(.largeTitle.bold())
-                Text("Switch to the KChime keyboard in any app, paste a message, and get instant reply suggestions.")
-                    .font(.body).foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center).padding(.horizontal, 32)
-            }
-            Spacer()
-            Button(action: onFinish) {
-                Text("Start Replying").font(.headline)
-                    .frame(maxWidth: .infinity).padding()
-                    .background(.teal).foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-            }
-            .padding(.horizontal, 24).padding(.bottom, 48)
-        }
-    }
-}
