@@ -122,6 +122,7 @@ struct SettingsView: View {
         }
     }
 
+    @MainActor
     private func deleteAllData() async {
         // 1. Wipe CoreData
         PersistenceController.shared.deleteAllData()

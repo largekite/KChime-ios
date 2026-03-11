@@ -20,7 +20,7 @@ struct LiveListenView: View {
     @State private var mode: ListenMode = .auto
     @State private var entries: [TranscriptEntry] = []
     @State private var currentDraft = ""
-    @State private var silenceTimer: Timer? = nil
+    @State private var silenceTask: Task<Void, Never>? = nil
 
     enum ListenMode: String, CaseIterable {
         case auto   = "Auto"
@@ -123,8 +123,8 @@ struct LiveListenView: View {
             }
         }
         .onDisappear {
-            silenceTimer?.invalidate()
-            silenceTimer = nil
+            silenceTask?.cancel()
+            silenceTask = nil
             speechRecognizer.stopListening()
         }
     }
@@ -184,16 +184,18 @@ struct LiveListenView: View {
     }
 
     private func scheduleSilenceCommit() {
-        silenceTimer?.invalidate()
-        silenceTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
-            Task { @MainActor in self.commitCurrentDraft() }
+        silenceTask?.cancel()
+        silenceTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            commitCurrentDraft()
         }
     }
 
     private func commitCurrentDraft() {
         let text = currentDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
-        silenceTimer?.invalidate()
+        silenceTask?.cancel()
         entries.append(TranscriptEntry(text: text, timestamp: Date()))
         currentDraft = ""
     }

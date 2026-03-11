@@ -48,8 +48,12 @@ struct SavedRepliesView: View {
     }
 
     private func deleteReplies(at offsets: IndexSet) {
-        for index in offsets {
-            context.delete(filtered[index])
+        let snapshot = filtered
+        let toDelete = offsets.compactMap { idx -> SavedReplyEntity? in
+            idx < snapshot.count ? snapshot[idx] : nil
+        }
+        for entity in toDelete {
+            context.delete(entity)
         }
         try? context.save()
     }

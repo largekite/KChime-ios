@@ -37,6 +37,13 @@ final class KeyboardViewController: UIInputViewController {
         advanceToNextInputMode()
     }
 
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Release cached data to stay within keyboard extension memory limits (~50 MB).
+        viewModel?.suggestions = []
+        viewModel?.longerAlternative = nil
+    }
+
     /// Dismiss the keyboard — called by the down-chevron button in the saved bar.
     func dismissKeyboardAction() {
         // dismissKeyboard() is a UIInputViewController method that hides the keyboard.

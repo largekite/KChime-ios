@@ -92,7 +92,7 @@ final class ShareViewModel: ObservableObject {
     }
 
     func save(_ text: String, at index: Int) {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
+        let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         var pending = defaults.stringArray(forKey: "kchime_pending_saves") ?? []
         pending.append(text)
         defaults.set(pending, forKey: "kchime_pending_saves")

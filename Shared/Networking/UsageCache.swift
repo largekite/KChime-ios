@@ -6,6 +6,7 @@ public final class UsageCache: @unchecked Sendable {
     public static let shared = UsageCache()
 
     private let defaults: UserDefaults
+    private let lock = NSLock()
     private let cacheKey = "kchime_usage_cache_v1"
     private let cacheTTL: TimeInterval = 5 * 60  // 5 minutes; still valid within same day
 
@@ -33,27 +34,36 @@ public final class UsageCache: @unchecked Sendable {
 
     /// Returns cached usage if still valid for today; nil triggers a fresh server fetch.
     public func cachedUsage(for featureKey: String) -> (remaining: Int, limit: Int)? {
-        guard
-            let data = defaults.data(forKey: storageKey(featureKey)),
-            let entry = try? JSONDecoder().decode(CacheEntry.self, from: data)
-        else { return nil }
+        lock.withLock {
+            guard
+                let data = defaults.data(forKey: storageKey(featureKey)),
+                let entry = try? JSONDecoder().decode(CacheEntry.self, from: data)
+            else { return nil }
 
-        let today = Self.todayUTC
+            let today = Self.todayUTC
 
-        // Day rolled over — return a fresh allocation based on current entitlement
-        if entry.dateKey != today {
-            let limit = EntitlementStore.shared.dailyLimit
-            setUsage(remaining: limit, limit: limit, for: featureKey)
-            return (limit, limit)
+            // Day rolled over — return a fresh allocation based on current entitlement
+            if entry.dateKey != today {
+                let limit = EntitlementStore.shared.dailyLimit
+                _setUsage(remaining: limit, limit: limit, for: featureKey)
+                return (limit, limit)
+            }
+
+            // TTL expired within same day — caller should re-fetch from server
+            guard Date().timeIntervalSince(entry.fetchedAt) < cacheTTL else { return nil }
+
+            return (entry.remaining, entry.limit)
         }
-
-        // TTL expired within same day — caller should re-fetch from server
-        guard Date().timeIntervalSince(entry.fetchedAt) < cacheTTL else { return nil }
-
-        return (entry.remaining, entry.limit)
     }
 
     public func setUsage(remaining: Int, limit: Int, for featureKey: String) {
+        lock.withLock {
+            _setUsage(remaining: remaining, limit: limit, for: featureKey)
+        }
+    }
+
+    /// Internal setter — caller must hold `lock`.
+    private func _setUsage(remaining: Int, limit: Int, for featureKey: String) {
         let entry = CacheEntry(
             remaining: remaining,
             limit: limit,
@@ -66,8 +76,14 @@ public final class UsageCache: @unchecked Sendable {
     }
 
     public func decrementLocally(for featureKey: String) {
-        guard let current = cachedUsage(for: featureKey) else { return }
-        setUsage(remaining: max(0, current.remaining - 1), limit: current.limit, for: featureKey)
+        lock.withLock {
+            guard
+                let data = defaults.data(forKey: storageKey(featureKey)),
+                let entry = try? JSONDecoder().decode(CacheEntry.self, from: data),
+                entry.dateKey == Self.todayUTC
+            else { return }
+            _setUsage(remaining: max(0, entry.remaining - 1), limit: entry.limit, for: featureKey)
+        }
     }
 
     public func invalidate(for featureKey: String) {

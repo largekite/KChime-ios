@@ -82,7 +82,7 @@ struct QuickContactNoteSheet: View {
     }
 
     private func save() {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
+        let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         var pending = defaults.array(forKey: "kchime_pending_contacts") as? [[String: String]] ?? []
         pending.append([
             "name": contactName.trimmingCharacters(in: .whitespaces),

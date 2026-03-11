@@ -136,14 +136,17 @@ public final class KChimeAPIClient: @unchecked Sendable {
     private let keychain = KeychainSwift()
 
     // Stable anonymous device ID, created once and persisted
+    private static let deviceIDLock = NSLock()
     public static var deviceID: String {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
-        if let existing = defaults.string(forKey: AppConstants.UserDefaultsKey.anonymousDeviceID) {
-            return existing
+        deviceIDLock.withLock {
+            let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
+            if let existing = defaults.string(forKey: AppConstants.UserDefaultsKey.anonymousDeviceID) {
+                return existing
+            }
+            let new = UUID().uuidString
+            defaults.set(new, forKey: AppConstants.UserDefaultsKey.anonymousDeviceID)
+            return new
         }
-        let new = UUID().uuidString
-        defaults.set(new, forKey: AppConstants.UserDefaultsKey.anonymousDeviceID)
-        return new
     }
 
     private init() {
@@ -222,13 +225,25 @@ public final class KChimeAPIClient: @unchecked Sendable {
     // MARK: - Usage
 
     public func fetchUsage(featureKey: String) async throws -> (remaining: Int, limit: Int) {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/usage?feature=\(featureKey)&deviceID=\(Self.deviceID)")!
+        var components = URLComponents(string: "\(AppConstants.apiBaseURL)/api/mobile/usage")!
+        components.queryItems = [
+            URLQueryItem(name: "feature", value: featureKey),
+            URLQueryItem(name: "deviceID", value: Self.deviceID),
+        ]
+        guard let url = components.url else { throw URLError(.badURL) }
         var urlRequest = URLRequest(url: url)
         if let token = keychain.get(AppConstants.KeychainKey.authToken) {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let (data, _) = try await session.data(for: urlRequest)
+        let (data, response) = try await session.data(for: urlRequest)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard http.statusCode == 200 else {
+            let apiErr = try? JSONDecoder().decode(APIError.self, from: data)
+            throw KChimeError.unknown(apiErr?.error ?? "Usage fetch failed: HTTP \(http.statusCode)")
+        }
         let result = try JSONDecoder().decode(UsageResponse.self, from: data)
         return (result.remaining, result.limit)
     }

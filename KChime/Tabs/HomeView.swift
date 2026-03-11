@@ -383,7 +383,7 @@ struct HomeView: View {
                 } else {
                     Text("\(remaining)/\(limit)")
                         .font(.caption.bold().monospacedDigit())
-                    ProgressView(value: Double(limit - remaining), total: Double(limit))
+                    ProgressView(value: Double(max(0, limit - remaining)), total: Double(max(1, limit)))
                         .tint(remaining > 1 ? .teal : .orange)
                         .frame(width: 40)
                 }

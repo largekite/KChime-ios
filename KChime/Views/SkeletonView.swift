@@ -40,6 +40,9 @@ struct ReplySkeletonCard: View {
 // MARK: - Suggestions Skeleton
 
 struct SuggestionsSkeletonCard: View {
+    // Pre-computed widths to avoid re-randomizing on every body evaluation
+    private static let barWidths: [CGFloat] = [160, 190, 140]
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -56,7 +59,7 @@ struct SuggestionsSkeletonCard: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 SkeletonShape(width: 50, height: 10)
                                 SkeletonShape(height: 14)
-                                SkeletonShape(width: CGFloat.random(in: 120...220), height: 14)
+                                SkeletonShape(width: Self.barWidths[idx], height: 14)
                             }
                         }
                         .padding(.horizontal, 16)

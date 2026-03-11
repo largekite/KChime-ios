@@ -389,35 +389,36 @@ struct PracticeSessionView: View {
                 }
                 if !suggestions.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: generateReplies) {
+                        Button {
+                            Task { await generateReplies() }
+                        } label: {
                             Image(systemName: "arrow.clockwise")
                         }
                         .disabled(isGenerating)
                     }
                 }
             }
-            .task { generateReplies() }
+            .task { await generateReplies() }
         }
     }
 
-    private func generateReplies() {
+    private func generateReplies() async {
+        guard !isGenerating else { return }
         isGenerating = true
         error = nil
-        Task {
-            do {
-                let request = ReplyRequest(
-                    featureKey: AppConstants.Feature.keyboard,
-                    receivedMessage: scenario.message,
-                    toneProfile: appState.toneProfile.toPayload()
-                )
-                let response = try await KChimeAPIClient.shared.generateReplies(request: request)
-                suggestions = response.suggestions
-                longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
-            } catch {
-                self.error = error.localizedDescription
-            }
-            isGenerating = false
+        do {
+            let request = ReplyRequest(
+                featureKey: AppConstants.Feature.keyboard,
+                receivedMessage: scenario.message,
+                toneProfile: appState.toneProfile.toPayload()
+            )
+            let response = try await KChimeAPIClient.shared.generateReplies(request: request)
+            suggestions = response.suggestions
+            longerAlternative = response.longerAlternative.isEmpty ? nil : response.longerAlternative
+        } catch {
+            self.error = error.localizedDescription
         }
+        isGenerating = false
     }
 
     private func copyAndComplete(text: String, index: Int) {
@@ -434,6 +435,12 @@ struct PracticeSessionView: View {
 
 private struct SeededRandomNumberGenerator: RandomNumberGenerator {
     var seed: UInt64
+
+    init(seed: UInt64) {
+        // Ensure seed is never 0 (xorshift produces all zeros if seeded with 0)
+        self.seed = seed == 0 ? 1 : seed
+    }
+
     mutating func next() -> UInt64 {
         seed ^= seed << 13
         seed ^= seed >> 7

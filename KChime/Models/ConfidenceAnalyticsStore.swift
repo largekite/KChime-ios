@@ -127,7 +127,7 @@ final class ConfidenceAnalyticsStore: ObservableObject {
     private static func dayKey(for date: Date = Date()) -> String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = .current
+        f.timeZone = TimeZone(identifier: "UTC")
         return f.string(from: date)
     }
 

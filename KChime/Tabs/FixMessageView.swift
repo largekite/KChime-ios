@@ -215,8 +215,8 @@ struct FixMessageView: View {
                 .foregroundStyle(.secondary)
                 .tracking(1)
 
-            ForEach(fixes) { fix in
-                FixCard(fix: fix, copiedIndex: $copiedIndex)
+            ForEach(Array(fixes.enumerated()), id: \.element.id) { idx, fix in
+                FixCard(fix: fix, index: idx, copiedIndex: $copiedIndex)
             }
         }
     }
@@ -257,9 +257,11 @@ struct FixMessageView: View {
 
 private struct FixCard: View {
     let fix: MessageFix
+    let index: Int
     @Binding var copiedIndex: Int?
 
     private var color: Color { toneColor(for: fix.tone) }
+    private var isCopied: Bool { copiedIndex == index }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -276,12 +278,12 @@ private struct FixCard: View {
 
                 Button(action: copy) {
                     HStack(spacing: 4) {
-                        Image(systemName: copiedIndex == fix.id.hashValue ? "checkmark.circle.fill" : "doc.on.doc")
+                        Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc")
                             .font(.caption)
-                        Text(copiedIndex == fix.id.hashValue ? "Copied!" : "Copy")
+                        Text(isCopied ? "Copied!" : "Copy")
                             .font(.caption)
                     }
-                    .foregroundStyle(copiedIndex == fix.id.hashValue ? .green : .teal)
+                    .foregroundStyle(isCopied ? .green : .teal)
                 }
                 .buttonStyle(.plain)
             }
@@ -317,7 +319,7 @@ private struct FixCard: View {
 
     private func copy() {
         UIPasteboard.general.string = fix.text
-        copiedIndex = fix.id.hashValue
+        copiedIndex = index
         Task {
             try? await Task.sleep(for: .seconds(2))
             copiedIndex = nil

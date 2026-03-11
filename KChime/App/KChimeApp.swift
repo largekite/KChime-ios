@@ -49,7 +49,7 @@ struct RootView: View {
     /// Picks up data queued by the keyboard / share extensions (stored in App Group
     /// UserDefaults) and merges it into CoreData so it appears in the main app.
     private func flushPendingExtensionData() {
-        let defaults = UserDefaults(suiteName: AppConstants.appGroupID)!
+        let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         let ctx = PersistenceController.shared.container.viewContext
 
         // Starred replies

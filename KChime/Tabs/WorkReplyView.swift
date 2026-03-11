@@ -299,12 +299,12 @@ struct WorkReplyView: View {
         var result: [WorkVariation] = []
         let allTexts = response.suggestions + (response.longerAlternative.isEmpty ? [] : [response.longerAlternative])
         for (idx, def) in variationDefs.enumerated() {
-            let text = idx < allTexts.count ? allTexts[idx] : ""
+            guard idx < allTexts.count, !allTexts[idx].isEmpty else { continue }
             result.append(WorkVariation(
                 title: def.0,
                 toneLabel: def.1,
                 toneColor: def.2,
-                text: text,
+                text: allTexts[idx],
                 riskLevel: def.3
             ))
         }
