@@ -43,13 +43,13 @@ final class ToastManager: ObservableObject {
         let toast = ToastItem(message: message, type: type)
         withAnimation(.spring(response: 0.3)) {
             toasts.append(toast)
-            // Limit to 3 visible toasts
-            if toasts.count > 3 { toasts.removeFirst() }
+            while toasts.count > 3 { toasts.removeFirst() }
         }
         Task {
             try? await Task.sleep(for: .seconds(3))
             withAnimation(.easeOut(duration: 0.2)) {
-                toasts.removeAll { $0.id == toast.id }
+                guard let index = toasts.firstIndex(where: { $0.id == toast.id }) else { return }
+                toasts.remove(at: index)
             }
         }
     }
@@ -58,7 +58,7 @@ final class ToastManager: ObservableObject {
 // MARK: - Toast Overlay
 
 struct ToastOverlay: View {
-    @StateObject var manager = ToastManager.shared
+    @ObservedObject var manager = ToastManager.shared
 
     var body: some View {
         VStack(spacing: 6) {

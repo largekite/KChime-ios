@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var confidenceStore = ConfidenceAnalyticsStore.shared
+    @ObservedObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var showDeleteConfirm = false
     @State private var deleteError: String?
 
@@ -132,13 +132,21 @@ struct SettingsView: View {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID)
         defaults?.removePersistentDomain(forName: AppConstants.appGroupID)
 
-        // 3. Call server delete
+        // 3. Wipe practice data stored in UserDefaults.standard
+        UserDefaults.standard.removeObject(forKey: "practice_streak")
+        UserDefaults.standard.removeObject(forKey: "practice_completedToday")
+        UserDefaults.standard.removeObject(forKey: "practice_lastDate")
+
+        // 4. Sign out (clears auth token + Apple User ID from Keychain)
+        SignInWithAppleService.shared.signOut()
+
+        // 5. Call server delete
         _ = try? await KChimeAPIClient.shared.deleteAccount()
 
-        // 4. Revoke entitlements
+        // 6. Revoke entitlements
         EntitlementStore.shared.revoke()
 
-        // 5. Reset all in-memory app state
+        // 7. Reset all in-memory app state
         appState.isPro = false
         appState.isMax = false
         appState.privacyAccepted = false

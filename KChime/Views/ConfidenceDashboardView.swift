@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Confidence Dashboard
 
 struct ConfidenceDashboardView: View {
-    @StateObject private var store = ConfidenceAnalyticsStore.shared
+    @ObservedObject private var store = ConfidenceAnalyticsStore.shared
 
     var body: some View {
         ScrollView {
