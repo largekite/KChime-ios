@@ -64,7 +64,9 @@ final class ShareViewModel: ObservableObject {
         )
 
         do {
+            try Task.checkCancellation()
             let response = try await KChimeAPIClient.shared.generateReplies(request: request)
+            try Task.checkCancellation()
             suggestions = response.suggestions
             remaining   = response.remaining
             UsageCache.shared.setUsage(remaining: response.remaining, limit: response.limit,
@@ -72,6 +74,9 @@ final class ShareViewModel: ObservableObject {
         } catch KChimeError.limitReached {
             errorMessage = "Daily limit reached. Open KChime to upgrade to Pro."
             remaining = 0
+        } catch is CancellationError {
+            // Extension dismissed — silently stop
+            return
         } catch {
             errorMessage = "Couldn't reach KChime — check your connection and try again."
         }

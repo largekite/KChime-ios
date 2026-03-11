@@ -167,13 +167,13 @@ final class KeyboardViewModel: ObservableObject {
         let promise = PromiseDetector.detect(in: text)
         detectedPromise = promise
 
-        Task {
+        Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(700))
-            insertedIndex = nil
+            self?.insertedIndex = nil
             // Only surface the memory opt-in banner if no promise was detected.
-            if detectedPromise == nil {
+            if self?.detectedPromise == nil {
                 try? await Task.sleep(for: .seconds(2))
-                showMemoryBanner = true
+                self?.showMemoryBanner = true
             }
         }
     }
@@ -196,18 +196,18 @@ final class KeyboardViewModel: ObservableObject {
         PromiseNotificationScheduler.schedule(promise)
         detectedPromise = nil
         // Show memory banner after promise is confirmed
-        Task {
+        Task { [weak self] in
             try? await Task.sleep(for: .seconds(1))
-            showMemoryBanner = true
+            self?.showMemoryBanner = true
         }
     }
 
     /// Called when the user dismisses the PromiseBannerView without setting a reminder.
     func dismissPromise() {
         detectedPromise = nil
-        Task {
+        Task { [weak self] in
             try? await Task.sleep(for: .seconds(1))
-            showMemoryBanner = true
+            self?.showMemoryBanner = true
         }
     }
 

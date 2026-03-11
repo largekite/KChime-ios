@@ -209,6 +209,7 @@ struct PracticeView: View {
     private func dateString(_ date: Date) -> String {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
+        fmt.timeZone = TimeZone(identifier: "UTC")
         return fmt.string(from: date)
     }
 
@@ -216,6 +217,7 @@ struct PracticeView: View {
         guard !str.isEmpty else { return nil }
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
+        fmt.timeZone = TimeZone(identifier: "UTC")
         return fmt.date(from: str)
     }
 }

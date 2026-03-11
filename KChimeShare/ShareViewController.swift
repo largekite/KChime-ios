@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 
 final class ShareViewController: UIViewController {
 
+    private var generationTask: Task<Void, Never>?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
@@ -51,6 +53,10 @@ final class ShareViewController: UIViewController {
         present(hosting, animated: true)
 
         // Auto-generate on open
-        Task { await viewModel.generate() }
+        generationTask = Task { await viewModel.generate() }
+    }
+
+    deinit {
+        generationTask?.cancel()
     }
 }
