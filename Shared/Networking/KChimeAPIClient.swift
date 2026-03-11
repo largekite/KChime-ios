@@ -149,6 +149,14 @@ public final class KChimeAPIClient: @unchecked Sendable {
         }
     }
 
+    /// Constructs an API URL from a path. Throws if the base URL is malformed.
+    private func apiURL(_ path: String) throws -> URL {
+        guard let url = URL(string: "\(AppConstants.apiBaseURL)\(path)") else {
+            throw URLError(.badURL)
+        }
+        return url
+    }
+
     private init() {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
@@ -159,7 +167,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
     // MARK: - Reply Generation
 
     public func generateReplies(request: ReplyRequest) async throws -> ReplyResponse {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/reply")!
+        let url = try apiURL("/api/mobile/reply")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -192,7 +200,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
     // MARK: - Fix Message
 
     public func fixMessage(request: FixMessageRequest) async throws -> FixMessageResponse {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/fix-message")!
+        let url = try apiURL("/api/mobile/fix-message")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -263,7 +271,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
         givenName: String? = nil,
         familyName: String? = nil
     ) async throws -> AuthResponse {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/auth/apple")!
+        let url = try apiURL("/api/auth/apple")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -295,7 +303,7 @@ public final class KChimeAPIClient: @unchecked Sendable {
 
     @discardableResult
     public func deleteAccount() async throws -> Bool {
-        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/account")!
+        let url = try apiURL("/api/mobile/account")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "DELETE"
         if let token = keychain.get(AppConstants.KeychainKey.authToken) {

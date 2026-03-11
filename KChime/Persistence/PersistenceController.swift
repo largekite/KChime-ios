@@ -8,10 +8,12 @@ final class PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "KChime")
 
-        let groupURL = (FileManager.default
+        guard let baseURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: AppConstants.appGroupID)
-            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!)
-            .appendingPathComponent("KChime.sqlite")
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            fatalError("[PersistenceController] No writable directory available for CoreData store")
+        }
+        let groupURL = baseURL.appendingPathComponent("KChime.sqlite")
 
         let description = inMemory
             ? NSPersistentStoreDescription()

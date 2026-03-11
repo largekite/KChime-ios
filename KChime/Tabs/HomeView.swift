@@ -66,9 +66,9 @@ private func toneColor(for tone: String) -> Color {
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
+    @StateObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var remaining = AppConstants.Feature.freeLimit
     @State private var limit = AppConstants.Feature.freeLimit
-    @State private var isLoadingUsage = false
 
     // Reply generator
     @State private var inputText = ""
@@ -84,7 +84,6 @@ struct HomeView: View {
 
     // Voice input
     @StateObject private var speechRecognizer = SpeechRecognizer(continuous: false)
-    @State private var micError: String? = nil
 
     var body: some View {
         NavigationStack {
@@ -198,7 +197,7 @@ struct HomeView: View {
                     .foregroundStyle(.red)
             }
 
-            if let err = micError ?? speechRecognizer.errorMessage ?? generateError {
+            if let err = speechRecognizer.errorMessage ?? generateError {
                 Text(err)
                     .font(.caption)
                     .foregroundStyle(.red)
@@ -396,15 +395,15 @@ struct HomeView: View {
             Spacer()
 
             // Confidence score pill
-            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
+            if confidenceStore.todayAverageScore > 0 {
                 NavigationLink(destination: ConfidenceDashboardView()) {
                     HStack(spacing: 6) {
                         ScoreRing(
-                            score: ConfidenceAnalyticsStore.shared.todayAverageScore,
+                            score: confidenceStore.todayAverageScore,
                             color: .teal,
                             size: 22
                         )
-                        Text("Avg \(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                        Text("Avg \(confidenceStore.todayAverageScore)")
                             .font(.caption.bold().monospacedDigit())
                             .foregroundStyle(.teal)
                     }
@@ -555,8 +554,6 @@ struct HomeView: View {
             limit = cached.limit
             return
         }
-        isLoadingUsage = true
-        defer { isLoadingUsage = false }
         if let result = try? await KChimeAPIClient.shared.fetchUsage(featureKey: AppConstants.Feature.keyboard) {
             remaining = result.remaining
             limit = result.limit

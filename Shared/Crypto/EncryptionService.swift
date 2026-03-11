@@ -17,8 +17,11 @@ public final class EncryptionService: @unchecked Sendable {
         }
         let key = SymmetricKey(size: .bits256)
         let keyData = key.withUnsafeBytes { Data($0) }
-        keychain.set(keyData, forKey: AppConstants.KeychainKey.contactNotesEncryptionKey,
-                     withAccess: .accessibleWhenUnlockedThisDeviceOnly)
+        let saved = keychain.set(keyData, forKey: AppConstants.KeychainKey.contactNotesEncryptionKey,
+                                 withAccess: .accessibleWhenUnlockedThisDeviceOnly)
+        if !saved {
+            throw EncryptionError.keychainWriteFailed
+        }
         return key
     }
 
@@ -47,5 +50,6 @@ public final class EncryptionService: @unchecked Sendable {
     public enum EncryptionError: Error {
         case sealFailed
         case decodeFailed
+        case keychainWriteFailed
     }
 }

@@ -541,35 +541,4 @@ private struct KDivider: View {
     }
 }
 
-struct ShimmerModifier: ViewModifier {
-    @State private var phase: CGFloat = -0.5
-    func body(content: Content) -> some View {
-        content
-            .overlay(
-                GeometryReader { geo in
-                    LinearGradient(
-                        stops: [
-                            .init(color: .clear, location: phase),
-                            .init(color: .white.opacity(0.45), location: phase + 0.2),
-                            .init(color: .clear, location: phase + 0.4),
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(width: geo.size.width * 2)
-                    .offset(x: geo.size.width * phase)
-                }
-                .blendMode(.screen)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-            )
-            .onAppear {
-                withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
-                    phase = 1.5
-                }
-            }
-    }
-}
-
-extension View {
-    func shimmer() -> some View { modifier(ShimmerModifier()) }
-}
+// shimmer() is provided by View+Shimmer.swift in the Shared/Extensions target

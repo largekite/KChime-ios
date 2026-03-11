@@ -67,6 +67,7 @@ struct FixMessageView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+
                 VStack(spacing: 20) {
                     headerCard
                     inputCard
@@ -81,6 +82,15 @@ struct FixMessageView: View {
             }
             .navigationTitle("Fix My Message")
             .navigationBarTitleDisplayMode(.large)
+            .task { loadCachedUsage() }
+        }
+    }
+
+    private func loadCachedUsage() {
+        if let cached = UsageCache.shared.cachedUsage(for: AppConstants.Feature.fixMessage) {
+            remaining = cached.remaining
+        } else if appState.isPro {
+            remaining = AppConstants.Feature.fixProLimit
         }
     }
 

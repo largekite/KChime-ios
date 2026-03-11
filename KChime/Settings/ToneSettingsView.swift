@@ -235,17 +235,6 @@ struct ToneSettingsView: View {
         }
     }
 
-    // MARK: - Profile name badge (auto-updates as sliders change)
-
-    private var profileBadge: some View {
-        HStack {
-            Image(systemName: "wand.and.stars")
-                .foregroundStyle(.teal)
-            Text(draft.label)
-                .font(.subheadline.bold())
-        }
-    }
-
     // MARK: - Helpers
 
     private func formalityLabel(_ value: Double) -> String {

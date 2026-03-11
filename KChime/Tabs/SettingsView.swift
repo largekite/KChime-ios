@@ -134,7 +134,14 @@ struct SettingsView: View {
         // 3. Call server delete
         _ = try? await KChimeAPIClient.shared.deleteAccount()
 
-        // 4. Reset app state
+        // 4. Revoke entitlements
+        EntitlementStore.shared.revoke()
+
+        // 5. Reset all in-memory app state
+        appState.isPro = false
+        appState.isMax = false
+        appState.privacyAccepted = false
+        appState.toneProfile = .defaultProfile
         appState.onboardingComplete = false
     }
 

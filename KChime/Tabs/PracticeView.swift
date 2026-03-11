@@ -153,13 +153,17 @@ struct PracticeView: View {
     private func refreshDailyState() {
         let today = dateString(Date())
         if lastDateString != today {
-            // New day — reset completions, potentially update streak
-            if let last = Calendar.current.date(from: DateFormatter().calendar.dateComponents([.year, .month, .day], from: Date())),
-               let lastDate = dateFromString(lastDateString) {
-                let diff = Calendar.current.dateComponents([.day], from: lastDate, to: last).day ?? 0
-                if diff == 1 && completedToday.count >= dailyGoal {
+            // New day — check yesterday's progress before resetting
+            let yesterdayCompleted = completedToday.count
+            if let lastDate = dateFromString(lastDateString) {
+                let diff = Calendar.current.dateComponents([.day], from: lastDate, to: Date()).day ?? 0
+                if diff == 1 && yesterdayCompleted >= dailyGoal {
                     streak += 1
+                } else if diff == 1 && yesterdayCompleted < dailyGoal {
+                    // Missed goal yesterday — reset streak
+                    streak = 0
                 } else if diff > 1 {
+                    // Missed one or more days entirely
                     streak = 0
                 }
             }

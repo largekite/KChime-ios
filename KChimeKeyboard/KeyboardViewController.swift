@@ -30,11 +30,30 @@ final class KeyboardViewController: UIInputViewController {
         ])
 
         hostingController = hosting
+
+        // Observe paywall deep-link requests from the SwiftUI view model
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleOpenPaywall),
+            name: .kchimeOpenPaywall, object: nil
+        )
     }
 
     /// Switch to the next system keyboard (globe button).
     func advanceToNextKeyboard() {
         advanceToNextInputMode()
+    }
+
+    @objc private func handleOpenPaywall() {
+        guard let url = URL(string: "kchime://paywall") else { return }
+        // Keyboard extensions use the responder chain to open URLs
+        var responder: UIResponder? = self
+        while let r = responder {
+            if let application = r as? UIApplication {
+                application.open(url)
+                return
+            }
+            responder = r.next
+        }
     }
 
     override func didReceiveMemoryWarning() {

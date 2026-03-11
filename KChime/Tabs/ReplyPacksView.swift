@@ -3,8 +3,6 @@ import SwiftUI
 // MARK: - Reply Packs View
 
 struct ReplyPacksView: View {
-    @State private var selectedPack: ReplyPack? = nil
-
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -62,7 +60,7 @@ private struct PackCard: View {
     private var accentColor: Color {
         switch pack.color {
         case "orange": return .orange
-        case "indigo": return .teal
+        case "indigo": return .indigo
         case "green":  return .green
         case "red":    return .red
         case "teal":   return .teal

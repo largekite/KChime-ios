@@ -52,20 +52,24 @@ struct RootView: View {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         let ctx = PersistenceController.shared.container.viewContext
 
+        var hasPendingSaves = false
+        var hasPendingContacts = false
+
         // Starred replies
         if let pending = defaults.stringArray(forKey: "kchime_pending_saves"), !pending.isEmpty {
+            hasPendingSaves = true
             for text in pending {
                 let entity = SavedReplyEntity(context: ctx)
                 entity.id = UUID()
                 entity.text = text
                 entity.createdAt = Date()
             }
-            defaults.removeObject(forKey: "kchime_pending_saves")
         }
 
         // Contact memory opt-ins queued from the keyboard
         if let pending = defaults.array(forKey: "kchime_pending_contacts") as? [[String: String]],
            !pending.isEmpty {
+            hasPendingContacts = true
             for entry in pending {
                 guard let name = entry["name"], !name.isEmpty else { continue }
                 let contact = ContactEntity(context: ctx)
@@ -75,9 +79,17 @@ struct RootView: View {
                 contact.updatedAt = Date()
                 if let notes = entry["notes"] { try? contact.setEncryptedNotes(notes) }
             }
-            defaults.removeObject(forKey: "kchime_pending_contacts")
         }
 
-        try? ctx.save()
+        // Only clear UserDefaults keys after CoreData save succeeds
+        do {
+            try ctx.save()
+            if hasPendingSaves { defaults.removeObject(forKey: "kchime_pending_saves") }
+            if hasPendingContacts { defaults.removeObject(forKey: "kchime_pending_contacts") }
+        } catch {
+            // Rollback unsaved entities so they can be retried next launch
+            ctx.rollback()
+            print("[KChimeApp] Failed to flush pending extension data: \(error)")
+        }
     }
 }

@@ -108,8 +108,6 @@ struct KeyboardSetupView: View {
 
     private func detectKeyboardState() {
         let modes = UITextInputMode.activeInputModes
-        let _ = Bundle.main.bundleIdentifier ?? ""
-        // Keyboard extension bundle ID is mainApp.keyboard
         keyboardEnabled = modes.contains { $0.primaryLanguage?.contains("KChime") ?? false }
             || modes.map(\.description).contains { $0.lowercased().contains("kchime") }
 
