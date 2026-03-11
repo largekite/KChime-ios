@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
+    @StateObject private var confidenceStore = ConfidenceAnalyticsStore.shared
     @State private var showDeleteConfirm = false
     @State private var deleteError: String?
 
@@ -71,8 +72,8 @@ struct SettingsView: View {
                             Label("Confidence Score", systemImage: "chart.bar.fill")
                                 .foregroundStyle(.teal)
                             Spacer()
-                            if ConfidenceAnalyticsStore.shared.todayAverageScore > 0 {
-                                Text("\(ConfidenceAnalyticsStore.shared.todayAverageScore)")
+                            if confidenceStore.todayAverageScore > 0 {
+                                Text("\(confidenceStore.todayAverageScore)")
                                     .font(.caption.bold().monospacedDigit())
                                     .foregroundStyle(.teal)
                             }

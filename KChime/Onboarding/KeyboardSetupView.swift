@@ -6,7 +6,7 @@ struct KeyboardSetupView: View {
 
     @State private var keyboardEnabled = false
     @State private var fullAccessEnabled = false
-    @State private var checkTimer: Timer?
+    @State private var pollingTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -94,16 +94,18 @@ struct KeyboardSetupView: View {
     }
 
     private func startPolling() {
-        checkTimer = Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { [self] _ in
-            Task { @MainActor in
+        pollingTask = Task { @MainActor in
+            while !Task.isCancelled {
                 detectKeyboardState()
+                if keyboardEnabled && fullAccessEnabled { break }
+                try? await Task.sleep(for: .milliseconds(750))
             }
         }
     }
 
     private func stopPolling() {
-        checkTimer?.invalidate()
-        checkTimer = nil
+        pollingTask?.cancel()
+        pollingTask = nil
     }
 
     private func detectKeyboardState() {
@@ -120,9 +122,6 @@ struct KeyboardSetupView: View {
             UIPasteboard.remove(withName: testPasteboard.name)
         }
 
-        if keyboardEnabled && fullAccessEnabled {
-            stopPolling()
-        }
     }
 }
 

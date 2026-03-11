@@ -310,7 +310,9 @@ struct PracticeSessionView: View {
                     }
 
                     if suggestions.isEmpty {
-                        Button(action: generateReplies) {
+                        Button {
+                            Task { await generateReplies() }
+                        } label: {
                             Group {
                                 if isGenerating {
                                     ProgressView().tint(.white)

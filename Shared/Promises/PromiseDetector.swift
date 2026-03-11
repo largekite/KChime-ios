@@ -97,43 +97,51 @@ enum PromiseDetector {
         }
 
         if lower.contains("tomorrow morning") {
-            let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
-            let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
+            guard let tomorrow = cal.date(byAdding: .day, value: 1, to: now),
+                  let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)
+            else { return defaultDate(cal: cal, now: now) }
             return (d, "tomorrow morning at 9 AM")
         }
 
         if lower.contains("tomorrow afternoon") {
-            let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
-            let d = cal.date(bySettingHour: 14, minute: 0, second: 0, of: tomorrow)!
+            guard let tomorrow = cal.date(byAdding: .day, value: 1, to: now),
+                  let d = cal.date(bySettingHour: 14, minute: 0, second: 0, of: tomorrow)
+            else { return defaultDate(cal: cal, now: now) }
             return (d, "tomorrow afternoon at 2 PM")
         }
 
         if lower.contains("tomorrow") {
-            let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
-            let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
+            guard let tomorrow = cal.date(byAdding: .day, value: 1, to: now),
+                  let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)
+            else { return defaultDate(cal: cal, now: now) }
             return (d, "tomorrow at 9 AM")
         }
 
         if lower.contains("this weekend") || lower.contains("over the weekend") {
             let weekday = cal.component(.weekday, from: now)     // 1 = Sun, 7 = Sat
             let daysToSaturday = (7 - weekday + 7) % 7
-            let saturday = cal.date(byAdding: .day, value: max(daysToSaturday, 1), to: now)!
-            let d = cal.date(bySettingHour: 10, minute: 0, second: 0, of: saturday)!
+            guard let saturday = cal.date(byAdding: .day, value: max(daysToSaturday, 1), to: now),
+                  let d = cal.date(bySettingHour: 10, minute: 0, second: 0, of: saturday)
+            else { return defaultDate(cal: cal, now: now) }
             return (d, "this Saturday at 10 AM")
         }
 
         if lower.contains("end of the week") || lower.contains("end of week") || lower.contains("by friday") {
             let weekday = cal.component(.weekday, from: now)
             let daysToFriday = (6 - weekday + 7) % 7
-            let friday = cal.date(byAdding: .day, value: max(daysToFriday, 1), to: now)!
-            let d = cal.date(bySettingHour: 17, minute: 0, second: 0, of: friday)!
+            guard let friday = cal.date(byAdding: .day, value: max(daysToFriday, 1), to: now),
+                  let d = cal.date(bySettingHour: 17, minute: 0, second: 0, of: friday)
+            else { return defaultDate(cal: cal, now: now) }
             return (d, "this Friday at 5 PM")
         }
 
         if lower.contains("next week") {
-            let d = cal.date(byAdding: .day, value: 7, to: now)!
+            guard let d = cal.date(byAdding: .day, value: 7, to: now) else {
+                return defaultDate(cal: cal, now: now)
+            }
             let monday = nextMonday(from: d, cal: cal)
-            let at9 = cal.date(bySettingHour: 9, minute: 0, second: 0, of: monday)!
+            guard let at9 = cal.date(bySettingHour: 9, minute: 0, second: 0, of: monday)
+            else { return defaultDate(cal: cal, now: now) }
             return (at9, "next week (Monday at 9 AM)")
         }
 
@@ -158,8 +166,13 @@ enum PromiseDetector {
         }
 
         // Default: tomorrow at 9 AM
-        let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
-        let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
+        return defaultDate(cal: cal, now: now)
+    }
+
+    private static func defaultDate(cal: Calendar, now: Date) -> (Date, String) {
+        guard let tomorrow = cal.date(byAdding: .day, value: 1, to: now),
+              let d = cal.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)
+        else { return (now.addingTimeInterval(24 * 3600), "tomorrow at 9 AM") }
         return (d, "tomorrow at 9 AM")
     }
 
