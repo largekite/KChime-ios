@@ -206,7 +206,11 @@ private final class PromisesViewModel: ObservableObject {
     @Published var editing: KChimePromise?
     @Published var permissionDenied = false
 
-    init() { reload() }
+    nonisolated init() {
+        let store = PromiseStore.shared
+        _upcoming = Published(initialValue: store.upcoming)
+        _past = Published(initialValue: store.past)
+    }
 
     func reload() {
         upcoming = PromiseStore.shared.upcoming

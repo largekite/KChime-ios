@@ -20,7 +20,7 @@ public final class SpeechRecognizer: ObservableObject {
     private let recognizer: SFSpeechRecognizer?
     public let continuous: Bool
 
-    public init(continuous: Bool = false) {
+    nonisolated public init(continuous: Bool = false) {
         self.continuous = continuous
         self.recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     }

@@ -15,7 +15,7 @@ final class AppState: ObservableObject {
 
     private let defaults: UserDefaults
 
-    init() {
+    nonisolated init() {
         let defaults = UserDefaults(suiteName: AppConstants.appGroupID) ?? .standard
         self.defaults = defaults
         self.onboardingComplete = defaults.bool(forKey: AppConstants.UserDefaultsKey.onboardingComplete)
