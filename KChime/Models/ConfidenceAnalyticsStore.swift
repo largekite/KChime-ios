@@ -7,7 +7,7 @@ import Foundation
 /// Data persists in App Group UserDefaults for cross-target access.
 @MainActor
 final class ConfidenceAnalyticsStore: ObservableObject {
-    static let shared = ConfidenceAnalyticsStore()
+    nonisolated(unsafe) static let shared = ConfidenceAnalyticsStore()
 
     private let defaults: UserDefaults
     private let storageKey = "kchime_confidence_analytics"

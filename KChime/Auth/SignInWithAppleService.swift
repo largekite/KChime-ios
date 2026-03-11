@@ -7,6 +7,8 @@ import Foundation
 @MainActor
 final class SignInWithAppleService: NSObject, ObservableObject {
 
+    nonisolated(unsafe) static let shared = SignInWithAppleService()
+
     @Published var isSignedIn: Bool = false
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?

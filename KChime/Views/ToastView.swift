@@ -36,7 +36,7 @@ struct ToastItem: Identifiable {
 
 @MainActor
 final class ToastManager: ObservableObject {
-    static let shared = ToastManager()
+    nonisolated(unsafe) static let shared = ToastManager()
     @Published var toasts: [ToastItem] = []
 
     func show(_ message: String, type: ToastType = .success) {
