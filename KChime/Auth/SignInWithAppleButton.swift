@@ -1,5 +1,5 @@
 import SwiftUI
-import AuthenticationServices
+@preconcurrency import AuthenticationServices
 
 /// Drop-in SwiftUI wrapper for the native Sign in with Apple button.
 /// Usage:

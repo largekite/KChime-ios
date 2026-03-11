@@ -1,4 +1,4 @@
-import CoreData
+@preconcurrency import CoreData
 
 // MARK: - Encryption helpers on the CoreData entity
 

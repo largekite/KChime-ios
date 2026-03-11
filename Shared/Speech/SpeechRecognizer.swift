@@ -1,5 +1,5 @@
-import Speech
-import AVFoundation
+@preconcurrency import Speech
+@preconcurrency import AVFoundation
 
 /// Reusable speech recognizer.  Call `startListening()` / `stopListening()`.
 /// When `continuous == true` it automatically restarts after each final result
