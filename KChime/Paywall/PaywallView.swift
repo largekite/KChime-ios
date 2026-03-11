@@ -15,9 +15,10 @@ struct PaywallView: View {
     }
 
     private let rows: [FeatureRow] = [
-        FeatureRow(icon: "wand.and.stars",      label: "AI replies / day",      free: "10",      pro: "50"),
+        FeatureRow(icon: "bubble.left.fill",    label: "Quick replies / day",   free: "10",      pro: "50"),
+        FeatureRow(icon: "briefcase.fill",      label: "Work replies / day",    free: "5",       pro: "50"),
+        FeatureRow(icon: "wand.and.stars",      label: "Fix My Message / day",  free: "5",       pro: "Unlimited"),
         FeatureRow(icon: "slider.horizontal.3", label: "Custom tone profiles",  free: "–",       pro: "✓"),
-        FeatureRow(icon: "arrow.2.squarepath",  label: "Rewrite chip",          free: "–",       pro: "✓"),
         FeatureRow(icon: "bell.badge",          label: "Promise reminders",     free: "–",       pro: "✓"),
         FeatureRow(icon: "bookmark.fill",       label: "Saved replies",         free: "Limited", pro: "Unlimited"),
         FeatureRow(icon: "person.2.fill",       label: "Contact memory",        free: "Limited", pro: "Unlimited"),
@@ -57,7 +58,7 @@ struct PaywallView: View {
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
 
-            Text("Get Pro for 50 AI replies/day, custom tone profiles, and priority generation.")
+            Text("Get Pro for 50 Quick Replies, 50 Work Replies, unlimited Fix My Message, and custom tone profiles.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

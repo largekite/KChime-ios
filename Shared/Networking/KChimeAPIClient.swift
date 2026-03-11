@@ -87,6 +87,41 @@ public struct UsageResponse: Decodable {
     public let feature: String
 }
 
+// MARK: - Fix Message Models
+
+public struct FixMessageRequest: Encodable {
+    public let draft: String
+    public let messageType: String
+    public let relationship: String
+    public let toneProfile: ToneProfilePayload
+    public let deviceID: String
+
+    public init(
+        draft: String,
+        messageType: String,
+        relationship: String,
+        toneProfile: ToneProfilePayload
+    ) {
+        self.draft = draft
+        self.messageType = messageType
+        self.relationship = relationship
+        self.toneProfile = toneProfile
+        self.deviceID = KChimeAPIClient.deviceID
+    }
+}
+
+public struct FixMessageResponseItem: Decodable, Sendable {
+    public let tone: String
+    public let text: String
+    public let improvements: [String]
+}
+
+public struct FixMessageResponse: Decodable, Sendable {
+    public let fixes: [FixMessageResponseItem]
+    public let remaining: Int
+    public let limit: Int
+}
+
 public struct APIError: Decodable, Error {
     public let error: String
     public let code: String?
@@ -141,6 +176,39 @@ public final class KChimeAPIClient: @unchecked Sendable {
         switch http.statusCode {
         case 200:
             return try JSONDecoder().decode(ReplyResponse.self, from: data)
+        case 401:
+            throw KChimeError.unauthenticated
+        case 429:
+            throw KChimeError.limitReached
+        default:
+            let apiErr = try? JSONDecoder().decode(APIError.self, from: data)
+            throw KChimeError.unknown(apiErr?.error ?? "HTTP \(http.statusCode)")
+        }
+    }
+
+    // MARK: - Fix Message
+
+    public func fixMessage(request: FixMessageRequest) async throws -> FixMessageResponse {
+        let url = URL(string: "\(AppConstants.apiBaseURL)/api/mobile/fix-message")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        if let token = keychain.get(AppConstants.KeychainKey.authToken) {
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        urlRequest.httpBody = try JSONEncoder().encode(request)
+
+        let (data, response) = try await session.data(for: urlRequest)
+
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
+        switch http.statusCode {
+        case 200:
+            return try JSONDecoder().decode(FixMessageResponse.self, from: data)
         case 401:
             throw KChimeError.unauthenticated
         case 429:

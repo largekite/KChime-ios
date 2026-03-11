@@ -40,8 +40,7 @@ public final class EntitlementStore: @unchecked Sendable {
     }
 
     public var dailyLimit: Int {
-        if isMax { return AppConstants.Feature.maxLimit }
-        if isPro { return AppConstants.Feature.proLimit }
+        if isPro || isMax { return AppConstants.Feature.proLimit }
         return AppConstants.Feature.freeLimit
     }
 

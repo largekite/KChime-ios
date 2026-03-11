@@ -276,7 +276,7 @@ struct WorkReplyView: View {
         Task {
             do {
                 let request = ReplyRequest(
-                    featureKey: AppConstants.Feature.keyboard,
+                    featureKey: AppConstants.Feature.workReply,
                     receivedMessage: prompt,
                     toneProfile: appState.toneProfile.toPayload(),
                     contextMode: "office"
@@ -402,6 +402,7 @@ private struct WorkVariationCard: View {
     private func copy() {
         UIPasteboard.general.string = variation.text
         copiedIndex = index
+        ToastManager.shared.show("Copied to clipboard")
         Task {
             try? await Task.sleep(for: .seconds(2))
             copiedIndex = nil

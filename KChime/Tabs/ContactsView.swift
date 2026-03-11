@@ -10,6 +10,17 @@ struct ContactsView: View {
     private var contacts: FetchedResults<ContactEntity>
 
     @State private var showAddContact = false
+    @State private var searchText = ""
+    @State private var contactToDelete: ContactEntity? = nil
+    @State private var showDeleteConfirm = false
+
+    private var filteredContacts: [ContactEntity] {
+        let all = Array(contacts)
+        if searchText.isEmpty { return all }
+        return all.filter {
+            ($0.displayName ?? "").localizedCaseInsensitiveContains(searchText)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -22,14 +33,26 @@ struct ContactsView: View {
                     )
                 } else {
                     List {
-                        ForEach(contacts, id: \.objectID) { contact in
+                        ForEach(filteredContacts, id: \.objectID) { contact in
                             NavigationLink(destination: ContactDetailView(contact: contact)) {
                                 ContactRow(contact: contact)
                             }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    contactToDelete = contact
+                                    showDeleteConfirm = true
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                         }
-                        .onDelete(perform: deleteContacts)
                     }
                     .listStyle(.insetGrouped)
+                    .searchable(
+                        text: $searchText,
+                        placement: .navigationBarDrawer(displayMode: contacts.count > 3 ? .always : .automatic),
+                        prompt: "Search contacts"
+                    )
                 }
             }
             .navigationTitle("Contact Memory")
@@ -43,15 +66,24 @@ struct ContactsView: View {
             .sheet(isPresented: $showAddContact) {
                 ContactEditView(contact: nil)
             }
+            .confirmationDialog(
+                "Delete contact?",
+                isPresented: $showDeleteConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    if let contact = contactToDelete {
+                        context.delete(contact)
+                        try? context.save()
+                        ToastManager.shared.show("Contact deleted", type: .success)
+                    }
+                    contactToDelete = nil
+                }
+                Button("Cancel", role: .cancel) { contactToDelete = nil }
+            } message: {
+                Text("This will permanently remove \(contactToDelete?.displayName ?? "this contact") and their notes.")
+            }
         }
-    }
-
-    private func deleteContacts(at offsets: IndexSet) {
-        let items = Array(contacts)
-        for index in offsets {
-            context.delete(items[index])
-        }
-        try? context.save()
     }
 }
 

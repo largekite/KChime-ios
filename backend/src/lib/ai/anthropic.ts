@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { AIProvider, GenerateParams } from "./index.js";
+import type { AIProvider, GenerateParams, RawPromptParams } from "./index.js";
 import type { GenerateResult } from "./prompt-builder.js";
 import { buildPrompt, parseGenerateResult } from "./prompt-builder.js";
 
@@ -28,5 +28,16 @@ export class AnthropicProvider implements AIProvider {
     const result = parseGenerateResult(raw);
     result.tokensUsed = message.usage.input_tokens + message.usage.output_tokens;
     return result;
+  }
+
+  async generateRaw(params: RawPromptParams): Promise<string> {
+    const message = await this.client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system: params.system,
+      messages: [{ role: "user", content: params.user }],
+    });
+    const block = message.content[0];
+    return block?.type === "text" ? block.text : "{}";
   }
 }
